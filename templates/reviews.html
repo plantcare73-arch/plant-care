@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Reviews - Plant Disease Detection') }}{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+        <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+    </button>
+    <h2 class="mb-0 fw-bold"><i class="fas fa-star text-success me-2"></i> {{ _('Reviews & Feedback') }}</h2>
+</div>
+
+<div class="row">
+    <!-- Submit Review -->
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">{{ _('Write a Review') }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('reviews.index') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="mb-3">
+                        <label class="form-label">{{ _('Rating') }}</label>
+                        <div>
+                            {% for i in range(1, 6) %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="rating"
+                                       id="rating{{ i }}" value="{{ i }}" {% if i == 5 %}checked{% endif %}>
+                                <label class="form-check-label" for="rating{{ i }}">
+                                    {{ i }} <i class="fas fa-star text-warning"></i>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">{{ _('Your Feedback') }}</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="4"
+                                  placeholder="{{ _('Share your experience...') }}"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-paper-plane"></i> {{ _('Submit Review') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="col-md-7">
+        {% if reviews %}
+        {% for review in reviews %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>{{ review.user_name }}</strong>
+                        <div class="text-warning">
+                            {% for i in range(review.rating) %}
+                            <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% for i in range(5 - review.rating) %}
+                            <i class="far fa-star"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        {{ review.created_at.strftime('%Y-%m-%d') }}
+                    </small>
+                </div>
+                {% if review.comment %}
+                <p class="mt-2 mb-0">{{ review.comment }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="text-center p-5 bg-light rounded">
+            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+            <h5>{{ _('No reviews yet') }}</h5>
+            <p class="text-muted">{{ _('Be the first to share your experience!') }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

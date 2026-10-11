@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: plant_care_web
+    restart: unless-stopped
+    command: ["gunicorn", "-c", "gunicorn.conf.py", "run:app"]
+    env_file:
+      - .env.production
+    volumes:
+      - uploads_data:/app/uploads
+      - static_volume:/app/static:ro
+      - ./models:/app/models:ro
+    expose:
+      - "5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - plant_care_net
+    deploy:
+      resources:
+        limits:
+          memory: 1200M
+
+  nginx:
+    image: nginx:alpine
+    container_name: plant_care_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/app/static:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    networks:
+      - plant_care_net
+
+  certbot:
+    image: certbot/certbot
+    container_name: plant_care_certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12d & wait $${!}; done;'"
+
+volumes:
+  uploads_data:
+    driver: local
+  static_volume:
+    driver: local
+  certbot_conf:
+    driver: local
+  certbot_www:
+    driver: local
+
+networks:
+  plant_care_net:
+    driver: bridge

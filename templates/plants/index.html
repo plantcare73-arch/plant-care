@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}My Plants - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+            <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+        </button>
+        <h2 class="mb-0"><i class="fas fa-leaf text-success me-2"></i> {{ _('My Plants') }}</h2>
+    </div>
+    <a href="{{ url_for('plants.add') }}" class="btn btn-success rounded-pill px-3">
+        <i class="fas fa-plus me-1"></i> {{ _('Add New Plant') }}
+    </a>
+</div>
+
+{% if plants %}
+<div class="row">
+    {% for plant in plants %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title text-success mb-0">
+                        <i class="fas fa-seedling"></i> {{ plant.name }}
+                    </h5>
+                    <span class="badge bg-{% if plant.status == 'Healthy' %}success{% else %}warning{% endif %}">
+                        {{ _(plant.status) }}
+                    </span>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">{{ _(plant.crop_type) }}</h6>
+                
+                <p class="card-text mb-1"><small><strong>{{ _('Location') }}:</strong> {{ plant.location or _('Not specified') }}</small></p>
+                <p class="card-text"><small class="text-muted">{{ _('Added') }}: {{ plant.created_at.strftime('%Y-%m-%d') }}</small></p>
+            </div>
+            <div class="card-footer bg-white border-top-0 pt-0">
+                <a href="{{ url_for('plants.view', plant_id=plant._id) }}" class="btn btn-outline-success btn-sm w-100">
+                    <i class="fas fa-eye"></i> {{ _('View History & Care') }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card shadow-sm text-center p-5">
+    <div class="card-body">
+        <i class="fas fa-seedling fa-4x text-muted mb-3"></i>
+        <h4>{{ _('No plants registered yet') }}</h4>
+        <p class="text-muted">{{ _('Start tracking your crops and plants to keep a detailed health history.') }}</p>
+        <a href="{{ url_for('plants.add') }}" class="btn btn-success mt-2">
+            <i class="fas fa-plus"></i> {{ _('Add Your First Plant') }}
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

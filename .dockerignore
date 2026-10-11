@@ -1,0 +1,40 @@
+# Virtual Environment & Python cache
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Git
+.git/
+.gitignore
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Testing & Linting
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs & temp files
+*.log
+*.tmp
+
+# Uploads runtime data (retain empty directory in container)
+uploads/*
+!uploads/.gitkeep
+
+# Temporary scripts
+fix_po*.py
+promote_admin.py
+
+# Documentation & IDE
+docs/
+.idea/
+.vscode/
+.agents/

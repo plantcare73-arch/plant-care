@@ -1,0 +1,139 @@
+"""
+Predictions routes.
+"""
+from datetime import datetime, timezone
+from bson.objectid import ObjectId
+from flask import render_template, request, redirect, url_for, session, flash, current_app, send_from_directory
+
+from . import predictions_bp
+from ..extensions import get_db
+from ..utils.decorators import login_required
+from ..utils.validation import validate_image_upload
+
+# Temporary mock for ML (until Phase 2 is fully implemented)
+# We will use the existing predict_disease function logic or move it to ml package.
+
+@predictions_bp.route('/detect', methods=['GET', 'POST'])
+@login_required
+def detect():
+    if request.method == 'POST':
+        try:
+            filepath, filename = validate_image_upload(request.files.get('leaf_image'))
+        except ValueError as e:
+            flash(str(e), 'error')
+            return render_template('detect.html')
+
+        try:
+            # Use ModelManager for inference
+            from ..ml.model_manager import model_manager
+            
+            prediction_results = model_manager.predict(filepath)
+            predicted_class = prediction_results['predicted_class']
+            confidence = prediction_results['confidence']
+            all_predictions = prediction_results['all_predictions']
+            
+            # Fetch comprehensive disease and treatment info
+            from ..disease_knowledge.services import get_disease_info
+            disease_info = get_disease_info(predicted_class)
+            
+            # Use the display name from the DB if available
+            display_name = disease_info['disease_name']
+
+            db = get_db()
+            predictions_col = db['predictions']
+            
+            prediction_record = {
+                'user_id': session['user_id'],
+                'image_filename': filename,
+                'predicted_class': predicted_class,
+                'display_name': display_name,
+                'confidence': confidence,
+                'all_predictions': all_predictions,
+                'disease_info': disease_info,
+                'created_at': datetime.now(timezone.utc),
+            }
+            result = predictions_col.insert_one(prediction_record)
+            prediction_id = str(result.inserted_id)
+
+            return redirect(url_for('predictions.result', prediction_id=prediction_id))
+            
+        except Exception as e:
+            current_app.logger.error("Detection failed: %s", e)
+            flash(f'Prediction failed: {str(e)}', 'error')
+            return render_template('detect.html')
+
+    return render_template('detect.html')
+
+
+@predictions_bp.route('/result/<prediction_id>')
+@login_required
+def result(prediction_id):
+    db = get_db()
+    try:
+        prediction = db['predictions'].find_one({
+            '_id': ObjectId(prediction_id),
+            'user_id': session['user_id'],
+        })
+    except Exception:
+        flash('Invalid prediction ID.', 'error')
+        return redirect(url_for('predictions.history'))
+
+    if not prediction:
+        flash('Prediction not found.', 'error')
+        return redirect(url_for('predictions.history'))
+
+    return render_template('result.html', prediction=prediction)
+
+
+@predictions_bp.route('/history')
+@login_required
+def history():
+    user_id = session['user_id']
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+
+    db = get_db()
+    predictions_col = db['predictions']
+    
+    # Build query with filters
+    query = {'user_id': user_id}
+    
+    crop_filter = request.args.get('crop')
+    if crop_filter:
+        query['disease_info.crop'] = crop_filter
+        
+    disease_filter = request.args.get('disease')
+    if disease_filter:
+        query['disease_info.disease'] = disease_filter
+
+    total = predictions_col.count_documents(query)
+    predictions = list(
+        predictions_col.find(query)
+        .sort('created_at', -1)
+        .skip((page - 1) * per_page)
+        .limit(per_page)
+    )
+    
+    # Fetch unique crops and diseases for the filter dropdowns
+    # In a real app, this might be aggregated or cached
+    unique_crops = predictions_col.distinct('disease_info.crop', {'user_id': user_id})
+    unique_diseases = predictions_col.distinct('disease_info.disease', {'user_id': user_id})
+    total_pages = (total + per_page - 1) // per_page
+
+    return render_template(
+        'history.html',
+        predictions=predictions,
+        page=page,
+        total_pages=total_pages,
+        total=total,
+        unique_crops=unique_crops,
+        unique_diseases=unique_diseases,
+        current_crop=crop_filter,
+        current_disease=disease_filter
+    )
+
+
+@predictions_bp.route('/uploads/<filename>')
+@login_required
+def uploaded_file(filename):
+    return send_from_directory(current_app.config['UPLOAD_DIR'], filename)

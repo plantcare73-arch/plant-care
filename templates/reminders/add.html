@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Add Reminder - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="mb-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+                <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+            </button>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-bell"></i> Schedule Reminder</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('reminders.add') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    {% if request.args.get('next') %}
+                    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Task / Reminder Title</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="e.g. Apply fungicide, Water crops, Check for pests" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="plant_id" class="form-label">Related Plant (Optional)</label>
+                        <select class="form-select" id="plant_id" name="plant_id">
+                            <option value="">-- General Farm Task --</option>
+                            {% for plant in plants %}
+                            <option value="{{ plant._id }}" {% if preselect_plant == plant._id|string %}selected{% endif %}>
+                                {{ plant.name }} ({{ plant.crop_type }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="due_date" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="due_date" name="due_date" required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ request.args.get('next', url_for('reminders.index')) }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-warning text-dark">Save Reminder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+    // Set today as min date for due_date
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('due_date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        dateInput.value = today; // Default to today
+    });
+</script>
+{% endblock %}
+{% endblock %}

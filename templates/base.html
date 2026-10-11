@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}PlantCare{% endblock %}</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#198754">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+
+    <!-- Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            padding-bottom: 70px; /* Space for bottom nav */
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Top App Bar */
+        .top-app-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #eaeaea;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-title {
+            font-weight: 700;
+            color: #198754;
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1030;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.02);
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6c757d;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: #198754;
+        }
+
+        /* Card Overrides for Sleekness */
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
+        }
+
+        /* App Guide & Tour Styles */
+        .tour-highlight {
+            outline: 3px solid #198754 !important;
+            outline-offset: 4px;
+            border-radius: 12px;
+            animation: tourPulse 1.5s infinite;
+            background-color: rgba(25, 135, 84, 0.12) !important;
+            transform: scale(1.08);
+            transition: all 0.25s ease-in-out;
+            z-index: 1040;
+            position: relative;
+        }
+
+        @keyframes tourPulse {
+            0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(25, 135, 84, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+        }
+
+        .tour-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ced4da;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .tour-dot.active {
+            width: 22px;
+            border-radius: 10px;
+            background-color: #198754;
+        }
+
+        .tour-feature-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tour-feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    
+    <!-- Top App Bar -->
+    <header class="top-app-bar">
+        <h1 class="app-title m-0">
+            <a href="{{ url_for('main.dashboard') if session.get('user_id') else url_for('main.index') }}" class="text-decoration-none text-success">PlantCare</a>
+        </h1>
+        <div class="d-flex align-items-center gap-3">
+            <!-- Language Switcher -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-success dropdown-toggle rounded-pill px-3" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe me-1"></i> A / ಕ / अ
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4" aria-labelledby="languageDropdown">
+                    <li><a class="dropdown-item {% if session.get('lang') == 'en' or not session.get('lang') %}active fw-semibold{% endif %}" href="{{ url_for('main.set_language', lang='en') }}">English (A)</a></li>
+                    <li><a class="dropdown-item {% if session.get('lang') == 'kn' %}active fw-semibold{% endif %}" href="{{ url_for('main.set_language', lang='kn') }}">ಕನ್ನಡ (ಕ)</a></li>
+                    <li><a class="dropdown-item {% if session.get('lang') == 'hi' %}active fw-semibold{% endif %}" href="{{ url_for('main.set_language', lang='hi') }}">हिंदी (अ)</a></li>
+                </ul>
+            </div>
+            <!-- Help / Tour Button -->
+            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" id="helpTourBtn" onclick="openAppTour(true)" title="{{ _('App Guide & Tour') }}">
+                <i class="fas fa-question-circle me-1"></i> {{ _('Tour') }}
+            </button>
+            {% if session.get('user_id') %}
+                {% if session.get('user_role') == 'admin' %}
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Admin">
+                    <i class="fas fa-shield-alt me-1"></i> {{ _('Admin') }}
+                </a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-light text-secondary rounded-pill px-3" title="Logout">
+                    <i class="fas fa-sign-out-alt me-1"></i> {{ _('Logout') }}
+                </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3 px-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show rounded-3 border-0">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mt-3 px-3">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Onboarding & App Tour Modal -->
+    <div class="modal fade" id="onboardingModal" tabindex="-1" aria-labelledby="onboardingModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-0 bg-light pb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="fas fa-compass fa-sm"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold text-dark fs-6" id="onboardingModalLabel">{{ _('App Guide & Tour') }}</h5>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close" onclick="dismissTour()"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <!-- Slide 0: Welcome -->
+                    <div class="tour-slide" id="tourSlide0">
+                        <span class="badge bg-success-subtle text-success mb-2 px-3 py-2 rounded-pill fw-semibold">
+                            <i class="fas fa-seedling me-1"></i> {{ _('Welcome to PlantCare') }}
+                        </span>
+                        <h4 class="fw-bold mb-2 text-dark">{{ _('Welcome,') }} {{ session.get('user_name', '') }}</h4>
+                        <p class="text-muted small mb-4 mx-auto" style="max-width: 520px;">
+                            {{ _('Here is a quick 1-minute guide to help you detect plant diseases, monitor crops, and protect your farm.') }}
+                        </p>
+                        <div class="row g-3 text-start justify-content-center">
+                            <div class="col-md-4 col-12">
+                                <div class="p-3 rounded-4 tour-feature-card h-100">
+                                    <div class="text-success mb-2 fs-5"><i class="fas fa-camera"></i></div>
+                                    <div class="fw-semibold small mb-1">{{ _('Instant AI Disease Diagnosis') }}</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">{{ _('Capture leaf photos directly using camera') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="p-3 rounded-4 tour-feature-card h-100">
+                                    <div class="text-success mb-2 fs-5"><i class="fas fa-cloud-sun-rain"></i></div>
+                                    <div class="fw-semibold small mb-1">{{ _('Weather & Irrigation Advisory') }}</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">{{ _('Live forecasts & proactive disease risk alerts') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="p-3 rounded-4 tour-feature-card h-100">
+                                    <div class="text-success mb-2 fs-5"><i class="fas fa-store-alt"></i></div>
+                                    <div class="fw-semibold small mb-1">{{ _('Nearby Agri Stores & Pathologists') }}</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">{{ _('Locate agricultural cooperatives within 50 km') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 1: Farm Dashboard & Live Weather -->
+                    <div class="tour-slide d-none" id="tourSlide1">
+                        <div class="rounded-circle bg-success-subtle text-success d-inline-flex p-3 mb-3">
+                            <i class="fas fa-cloud-sun fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('1. Farm Dashboard & Live Weather') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Your main control center! Check real-time temperature, humidity, rainfall forecasts, and automated disease risk alerts tailored to your crops.') }}
+                        </p>
+                        <div class="alert alert-success bg-success-subtle border-0 rounded-3 text-start small py-2 px-3 mx-auto" style="max-width: 480px;">
+                            <i class="fas fa-lightbulb text-success me-1"></i> {{ _('Tip: Receive daily irrigation recommendations based on today’s weather.') }}
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Instant AI Disease Detection -->
+                    <div class="tour-slide d-none" id="tourSlide2">
+                        <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex p-3 mb-3">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('2. Instant AI Disease Detection') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Tap the Scan tab to take a photo of any unhealthy plant leaf directly using your device camera or upload from your gallery.') }}
+                        </p>
+                        <div class="alert alert-primary bg-primary-subtle border-0 rounded-3 text-start small py-2 px-3 mx-auto" style="max-width: 480px;">
+                            <i class="fas fa-check-circle text-primary me-1"></i> {{ _('Get instant confidence ratings plus both chemical and organic treatment instructions!') }}
+                        </div>
+                    </div>
+
+                    <!-- Slide 3: Crop Management & Digital Log -->
+                    <div class="tour-slide d-none" id="tourSlide3">
+                        <div class="rounded-circle bg-success-subtle text-success d-inline-flex p-3 mb-3">
+                            <i class="fas fa-leaf fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('3. Crop Management & Digital Log') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Register your fields and crops under the Crops tab. Keep track of variety types, planting dates, soil health logs, and growth milestones.') }}
+                        </p>
+                    </div>
+
+                    <!-- Slide 4: Nearby Agri Stores & Experts -->
+                    <div class="tour-slide d-none" id="tourSlide4">
+                        <div class="rounded-circle bg-warning-subtle text-warning d-inline-flex p-3 mb-3">
+                            <i class="fas fa-map-marker-alt fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('4. Nearby Agri Stores & Experts') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Under the Nearby tab, click "Locate Me" once to discover agrochemical stores, seed centers, and agricultural specialists within 50 km.') }}
+                        </p>
+                        <div class="alert alert-warning bg-warning-subtle border-0 rounded-3 text-start small py-2 px-3 mx-auto" style="max-width: 480px;">
+                            <i class="fas fa-map-pin text-warning me-1"></i> {{ _('Your location is saved automatically so you never have to locate yourself again!') }}
+                        </div>
+                    </div>
+
+                    <!-- Slide 5: Farm Reminders & Care Tasks -->
+                    <div class="tour-slide d-none" id="tourSlide5">
+                        <div class="rounded-circle bg-info-subtle text-info d-inline-flex p-3 mb-3">
+                            <i class="fas fa-bell fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('5. Farm Reminders & Care Tasks') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Never forget to spray fungicides, water seedlings, or harvest your yield. Schedule tasks with due dates under the Tasks tab.') }}
+                        </p>
+                    </div>
+
+                    <!-- Slide 6: Regional Languages & Help -->
+                    <div class="tour-slide d-none" id="tourSlide6">
+                        <div class="rounded-circle bg-secondary-subtle text-secondary d-inline-flex p-3 mb-3">
+                            <i class="fas fa-globe fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">{{ _('6. Regional Languages & Help') }}</h5>
+                        <p class="text-muted mb-3 mx-auto" style="max-width: 500px;">
+                            {{ _('Switch between English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी) anytime in the top bar. You can also re-launch this tour anytime by tapping the "Tour" button!') }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 bg-light d-flex justify-content-between align-items-center py-2 px-4">
+                    <button type="button" class="btn btn-sm btn-link text-muted text-decoration-none px-2" onclick="dismissTour()">
+                        {{ _('Skip') }}
+                    </button>
+                    
+                    <div class="d-flex align-items-center gap-2" id="tourDotsContainer">
+                        <span class="tour-dot active" onclick="goToTourSlide(0)" title="1"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(1)" title="2"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(2)" title="3"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(3)" title="4"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(4)" title="5"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(5)" title="6"></span>
+                        <span class="tour-dot" onclick="goToTourSlide(6)" title="7"></span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 d-none" id="tourPrevBtn" onclick="prevTourSlide()">
+                            <i class="fas fa-arrow-left me-1"></i> {{ _('Previous') }}
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold shadow-sm" id="tourNextBtn" onclick="nextTourSlide()">
+                            {{ _('Start Tour') }} <i class="fas fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    {% if session.get('user_id') %}
+    <nav class="bottom-nav">
+        <a href="{{ url_for('main.dashboard') }}" id="tourNavHome" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>{{ _('Home') }}</span>
+        </a>
+        <a href="{{ url_for('plants.index') }}" id="tourNavCrops" class="nav-item {% if request.endpoint == 'plants.index' %}active{% endif %}">
+            <i class="fas fa-leaf"></i>
+            <span>{{ _('Crops') }}</span>
+        </a>
+        <a href="{{ url_for('predictions.detect') }}" id="tourNavScan" class="nav-item {% if request.endpoint == 'predictions.detect' %}active{% endif %}">
+            <i class="fas fa-camera"></i>
+            <span>{{ _('Scan') }}</span>
+        </a>
+        <a href="{{ url_for('location.index') }}" id="tourNavNearby" class="nav-item {% if request.endpoint == 'location.index' %}active{% endif %}">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ _('Nearby') }}</span>
+        </a>
+        <a href="{{ url_for('reminders.index') }}" id="tourNavTasks" class="nav-item {% if request.endpoint == 'reminders.index' %}active{% endif %}">
+            <i class="fas fa-bell"></i>
+            <span>{{ _('Tasks') }}</span>
+        </a>
+    </nav>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('SW registered with scope:', registration.scope);
+            })
+            .catch(err => {
+              console.error('SW registration failed:', err);
+            });
+        });
+      }
+    </script>
+    
+    <!-- Global PWA Navigation Handler -->
+    <script>
+      function handlePwaBack() {
+        const customBack = document.body.getAttribute('data-back-url');
+        if (customBack) {
+          window.location.href = customBack;
+          return;
+        }
+
+        if (document.referrer && document.referrer.startsWith(window.location.origin) && document.referrer !== window.location.href) {
+          window.history.back();
+          return;
+        }
+
+        if (window.history.length > 1 && window.location.pathname !== '/' && window.location.pathname !== '/dashboard') {
+          window.history.back();
+          return;
+        }
+
+        {% if session.get('user_id') %}
+          if (window.location.pathname !== "{{ url_for('main.dashboard') }}") {
+            window.location.href = "{{ url_for('main.dashboard') }}";
+          }
+        {% else %}
+          if (window.location.pathname !== "{{ url_for('main.index') }}") {
+            window.location.href = "{{ url_for('main.index') }}";
+          }
+        {% endif %}
+      }
+    </script>
+    
+    <!-- App Guide & Interactive Tour Scripts -->
+    <script>
+      let currentTourSlide = 0;
+      const totalTourSlides = 7;
+      const tourHighlightMap = {
+        0: null,
+        1: 'tourNavHome',
+        2: 'tourNavScan',
+        3: 'tourNavCrops',
+        4: 'tourNavNearby',
+        5: 'tourNavTasks',
+        6: 'helpTourBtn'
+      };
+
+      const tourButtonText = {
+        start: {{ _('Start Tour')|tojson }},
+        next: {{ _('Next')|tojson }},
+        finish: {{ _('Finish Tour')|tojson }}
+      };
+
+      function clearTourHighlights() {
+        document.querySelectorAll('.tour-highlight').forEach(el => {
+          el.classList.remove('tour-highlight');
+        });
+      }
+
+      function updateTourHighlight(slideIdx) {
+        clearTourHighlights();
+        const targetId = tourHighlightMap[slideIdx];
+        if (!targetId) return;
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.classList.add('tour-highlight');
+        }
+      }
+
+      function goToTourSlide(index) {
+        if (index < 0 || index >= totalTourSlides) return;
+        currentTourSlide = index;
+
+        // Hide all slides, show current
+        for (let i = 0; i < totalTourSlides; i++) {
+          const slide = document.getElementById('tourSlide' + i);
+          if (slide) {
+            if (i === currentTourSlide) {
+              slide.classList.remove('d-none');
+            } else {
+              slide.classList.add('d-none');
+            }
+          }
+        }
+
+        // Update dots
+        const dots = document.querySelectorAll('#tourDotsContainer .tour-dot');
+        dots.forEach((dot, idx) => {
+          if (idx === currentTourSlide) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+
+        // Update Prev button
+        const prevBtn = document.getElementById('tourPrevBtn');
+        if (prevBtn) {
+          if (currentTourSlide === 0) {
+            prevBtn.classList.add('d-none');
+          } else {
+            prevBtn.classList.remove('d-none');
+          }
+        }
+
+        // Update Next button
+        const nextBtn = document.getElementById('tourNextBtn');
+        if (nextBtn) {
+          if (currentTourSlide === 0) {
+            nextBtn.innerHTML = tourButtonText.start + ' <i class="fas fa-arrow-right ms-1"></i>';
+          } else if (currentTourSlide === totalTourSlides - 1) {
+            nextBtn.innerHTML = tourButtonText.finish + ' <i class="fas fa-check ms-1"></i>';
+          } else {
+            nextBtn.innerHTML = tourButtonText.next + ' <i class="fas fa-arrow-right ms-1"></i>';
+          }
+        }
+
+        // Update highlight
+        updateTourHighlight(currentTourSlide);
+      }
+
+      function nextTourSlide() {
+        if (currentTourSlide < totalTourSlides - 1) {
+          goToTourSlide(currentTourSlide + 1);
+        } else {
+          dismissTour();
+        }
+      }
+
+      function prevTourSlide() {
+        if (currentTourSlide > 0) {
+          goToTourSlide(currentTourSlide - 1);
+        }
+      }
+
+      function openAppTour(fromUserClick = false) {
+        goToTourSlide(0);
+        const modalEl = document.getElementById('onboardingModal');
+        if (modalEl) {
+          const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+          modalInstance.show();
+        }
+      }
+
+      function dismissTour() {
+        clearTourHighlights();
+        const modalEl = document.getElementById('onboardingModal');
+        if (modalEl) {
+          const modalInstance = bootstrap.Modal.getInstance(modalEl);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+        localStorage.setItem('has_seen_onboarding', 'true');
+        {% if session.get('user_id') %}
+        fetch('/auth/complete-onboarding', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).catch(err => console.log('Tour completed sync error:', err));
+        {% endif %}
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const modalEl = document.getElementById('onboardingModal');
+        if (modalEl) {
+          modalEl.addEventListener('hidden.bs.modal', function() {
+            clearTourHighlights();
+          });
+        }
+
+        const isFirstLogin = {{ 'true' if session.get('first_login') else 'false' }};
+        const isLoggedIn = {{ 'true' if session.get('user_id') else 'false' }};
+        const hasSeenLocal = localStorage.getItem('has_seen_onboarding');
+
+        if (isFirstLogin || (isLoggedIn && !hasSeenLocal)) {
+          setTimeout(() => {
+            openAppTour();
+          }, 600);
+        }
+      });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

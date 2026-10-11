@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Add Plant - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="mb-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+                <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+            </button>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="fas fa-plus-circle"></i> {{ _('Register a New Plant') }}</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('plants.add') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ _('Plant Nickname / Identifier') }}</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="{{ _('e.g. Backyard Tomato #1, North Field Potatoes') }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="crop_type" class="form-label">{{ _('Crop Type') }}</label>
+                        <select class="form-select" id="crop_type" name="crop_type" required>
+                            <option value="" disabled selected>{{ _('Select crop type...') }}</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Blueberry">Blueberry</option>
+                            <option value="Cherry">Cherry</option>
+                            <option value="Corn">Corn (Maize)</option>
+                            <option value="Grape">Grape</option>
+                            <option value="Orange">Orange</option>
+                            <option value="Peach">Peach</option>
+                            <option value="Pepper">Pepper (Bell)</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Raspberry">Raspberry</option>
+                            <option value="Soybean">Soybean</option>
+                            <option value="Squash">Squash</option>
+                            <option value="Strawberry">Strawberry</option>
+                            <option value="Tomato">Tomato</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="location" class="form-label">{{ _('Location (Optional)') }}</label>
+                        <input type="text" class="form-control" id="location" name="location" 
+                               placeholder="{{ _('e.g. Greenhouse A, Raised Bed 2') }}">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('plants.index') }}" class="btn btn-outline-secondary">{{ _('Cancel') }}</a>
+                        <button type="submit" class="btn btn-success">{{ _('Save Plant') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

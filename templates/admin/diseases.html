@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Disease Management - PlantCare{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 mb-3">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-link text-muted px-0 text-decoration-none">
+            <i class="fas fa-arrow-left me-1"></i> {{ _('Back to Dashboard') }}
+        </a>
+    </div>
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold text-dark"><i class="fas fa-viruses text-danger me-2"></i> {{ _('Disease Management') }}</h2>
+            <p class="text-muted">{{ _('Manage diseases, symptoms, and treatments.') }}</p>
+        </div>
+        <button class="btn btn-danger rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#diseaseModal" onclick="resetForm()">
+            <i class="fas fa-plus me-1"></i> {{ _('Add Disease') }}
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    {% for d in diseases %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title fw-bold text-primary mb-1">{{ d.name }}</h5>
+                    <span class="badge bg-success rounded-pill align-self-start">{{ d.crop }}</span>
+                </div>
+                <h6 class="card-subtitle mb-3 text-muted small">ID: {{ d.class_name }}</h6>
+                
+                <p class="card-text small mb-2 text-truncate" style="max-height: 40px;">{{ d.description }}</p>
+                
+                <div class="mt-3">
+                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick='editDisease({{ d|tojson|safe }})'>
+                        <i class="fas fa-edit me-1"></i> {{ _('Edit') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="fas fa-leaf fa-3x mb-3 text-light"></i>
+        <p>{{ _('No diseases found in the database.') }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Disease Modal -->
+<div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0" style="border-radius: 16px;">
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold" id="diseaseModalLabel">{{ _('Disease Details') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin.update_disease') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ _('Class Name (ID)') }}</label>
+                            <input type="text" class="form-control" name="class_name" id="class_name" required placeholder="e.g. tomato_blight">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ _('Display Name') }}</label>
+                            <input type="text" class="form-control" name="name" id="name" required placeholder="e.g. Tomato Blight">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">{{ _('Crop') }}</label>
+                            <input type="text" class="form-control" name="crop" id="crop" required placeholder="e.g. Tomato">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Description') }}</label>
+                            <textarea class="form-control" name="description" id="description" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Symptoms (One per line)') }}</label>
+                            <textarea class="form-control" name="symptoms" id="symptoms" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="col-12 mt-4">
+                            <h6 class="fw-bold border-bottom pb-2 text-primary">{{ _('Treatments') }}</h6>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Prevention (One per line)') }}</label>
+                            <textarea class="form-control" name="prevention" id="prevention" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Chemical Control (One per line)') }}</label>
+                            <textarea class="form-control" name="chemical_control" id="chemical_control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Biological Control (One per line)') }}</label>
+                            <textarea class="form-control" name="biological_control" id="biological_control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4"><i class="fas fa-save me-1"></i> {{ _('Save Changes') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const modal = new bootstrap.Modal(document.getElementById('diseaseModal'));
+    
+    function resetForm() {
+        document.getElementById('class_name').value = '';
+        document.getElementById('class_name').readOnly = false;
+        document.getElementById('name').value = '';
+        document.getElementById('crop').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('symptoms').value = '';
+        document.getElementById('prevention').value = '';
+        document.getElementById('chemical_control').value = '';
+        document.getElementById('biological_control').value = '';
+    }
+
+    function editDisease(d) {
+        document.getElementById('class_name').value = d.class_name;
+        document.getElementById('class_name').readOnly = true; // Prevent changing ID
+        document.getElementById('name').value = d.name || '';
+        document.getElementById('crop').value = d.crop || '';
+        document.getElementById('description').value = d.description || '';
+        
+        document.getElementById('symptoms').value = (d.symptoms || []).join('\n');
+        
+        if (d.treatment) {
+            document.getElementById('prevention').value = (d.treatment.prevention || []).join('\n');
+            document.getElementById('chemical_control').value = (d.treatment.chemical_control || []).join('\n');
+            document.getElementById('biological_control').value = (d.treatment.biological_control || []).join('\n');
+        } else {
+            document.getElementById('prevention').value = '';
+            document.getElementById('chemical_control').value = '';
+            document.getElementById('biological_control').value = '';
+        }
+        
+        modal.show();
+    }
+</script>
+{% endblock %}

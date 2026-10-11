@@ -1,0 +1,875 @@
+# Translations template for PROJECT.
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Language: kn\n"
+"Language-Team: kn <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Home"
+msgstr "ಮನೆ"
+
+msgid "Crops"
+msgstr "ಬೆಳೆಗಳು"
+
+msgid "Scan"
+msgstr "ಸ್ಕ್ಯಾನ್"
+
+msgid "Tasks"
+msgstr "ಕಾರ್ಯಗಳು"
+
+msgid "Welcome back"
+msgstr "ಮತ್ತೆ ಸ್ವಾಗತ"
+
+msgid "Irrigation Advice"
+msgstr "ನೀರಾವರಿ ಸಲಹೆ"
+
+msgid "Change Location"
+msgstr "ಸ್ಥಳ ಬದಲಾಯಿಸಿ"
+
+msgid "Update Location"
+msgstr "ಸ್ಥಳ ನವೀಕರಿಸಿ"
+
+msgid "Enter City Name"
+msgstr "ನಗರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ"
+
+msgid "Use Current Location"
+msgstr "ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಬಳಸಿ"
+
+msgid "Save"
+msgstr "ಉಳಿಸಿ"
+
+msgid "Total Predictions"
+msgstr "ಒಟ್ಟು ಮುನ್ಸೂಚನೆಗಳು"
+
+msgid "Supported Classes"
+msgstr "ಬೆಂಬಲಿತ ರೋಗಗಳು"
+
+msgid "Supported Crops"
+msgstr "ಬೆಂಬಲಿತ ಬೆಳೆಗಳು"
+
+msgid "Detect Disease"
+msgstr "ರೋಗ ಪತ್ತೆ ಮಾಡಿ"
+
+msgid "Upload a leaf image for AI analysis"
+msgstr "AI ವಿಶ್ಲೇಷಣೆಗಾಗಿ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"
+
+msgid "Upload Image"
+msgstr "ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"
+
+msgid "Prediction History"
+msgstr "ಮುನ್ಸೂಚನೆ ಇತಿಹಾಸ"
+
+msgid "View all your past predictions"
+msgstr "ನಿಮ್ಮ ಎಲ್ಲಾ ಹಿಂದಿನ ಮುನ್ಸೂಚನೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ"
+
+msgid "View History"
+msgstr "ಇತಿಹಾಸ ವೀಕ್ಷಿಸಿ"
+
+msgid "My Plants"
+msgstr "ನನ್ನ ಸಸ್ಯಗಳು"
+
+msgid "Add New Plant"
+msgstr "ಹೊಸ ಸಸ್ಯವನ್ನು ಸೇರಿಸಿ"
+
+msgid "Location"
+msgstr "ಸ್ಥಳ"
+
+msgid "Not specified"
+msgstr "ನಿರ್ದಿಷ್ಟಪಡಿಸಿಲ್ಲ"
+
+msgid "Added"
+msgstr "ಸೇರಿಸಲಾಗಿದೆ"
+
+msgid "View History & Care"
+msgstr "ಇತಿಹಾಸ ಮತ್ತು ಕಾಳಜಿಯನ್ನು ವೀಕ್ಷಿಸಿ"
+
+msgid "No plants registered yet"
+msgstr "ಇನ್ನೂ ಯಾವುದೇ ಸಸ್ಯಗಳನ್ನು ನೋಂದಾಯಿಸಲಾಗಿಲ್ಲ"
+
+msgid "Start tracking your crops and plants to keep a detailed health history."
+msgstr "ವಿವರವಾದ ಆರೋಗ್ಯ ಇತಿಹಾಸವನ್ನು ಇರಿಸಿಕೊಳ್ಳಲು ನಿಮ್ಮ ಬೆಳೆಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಪ್ರಾರಂಭಿಸಿ."
+
+msgid "Add Your First Plant"
+msgstr "ನಿಮ್ಮ ಮೊದಲ ಸಸ್ಯವನ್ನು ಸೇರಿಸಿ"
+
+msgid "Detect Plant Disease"
+msgstr "ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Click below or drag and drop a leaf image"
+msgstr "ಕೆಳಗೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಎಳೆಯಿರಿ ಮತ್ತು ಬಿಡಿ"
+
+msgid "Supported formats: JPG, JPEG, PNG (Max 10MB)"
+msgstr "ಬೆಂಬಲಿತ ಸ್ವರೂಪಗಳು: JPG, JPEG, PNG (Max 10MB)"
+
+msgid "Tips for best results:"
+msgstr "ಉತ್ತಮ ಫಲಿತಾಂಶಗಳಿಗಾಗಿ ಸಲಹೆಗಳು:"
+
+msgid "Take a clear, well-lit photo of the affected leaf"
+msgstr "ಬಾಧಿತ ಎಲೆಯ ಸ್ಪಷ್ಟ, ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ"
+
+msgid "Ensure the leaf fills most of the image"
+msgstr "ಎಲೆಯು ಹೆಚ್ಚಿನ ಚಿತ್ರವನ್ನು ತುಂಬುತ್ತದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ"
+
+msgid "Avoid blurry or dark images"
+msgstr "ಮಸುಕಾದ ಅಥವಾ ಗಾಢವಾದ ಚಿತ್ರಗಳನ್ನು ತಪ್ಪಿಸಿ"
+
+msgid "Currently supports: Pepper Bell and Potato diseases"
+msgstr "ಪ್ರಸ್ತುತ ಬೆಂಬಲಿಸುತ್ತದೆ: ಮೆಣಸು ಮತ್ತು ಆಲೂಗೆಡ್ಡೆ ರೋಗಗಳು"
+
+msgid "Analyze Leaf"
+msgstr "ಎಲೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಿ"
+
+msgid "Prediction History"
+msgstr "ಮುನ್ಸೂಚನೆಯ ಇತಿಹಾಸ"
+
+msgid "All Crops"
+msgstr "ಎಲ್ಲಾ ಬೆಳೆಗಳು"
+
+msgid "All Diseases"
+msgstr "ಎಲ್ಲಾ ರೋಗಗಳು"
+
+msgid "Filter"
+msgstr "ಫಿಲ್ಟರ್"
+
+msgid "Date"
+msgstr "ದಿನಾಂಕ"
+
+msgid "Image"
+msgstr "ಚಿತ್ರ"
+
+msgid "Disease"
+msgstr "ರೋಗ"
+
+msgid "Confidence"
+msgstr "ಆತ್ಮವಿಶ್ವಾಸ"
+
+msgid "Action"
+msgstr "ಕ್ರಿಯೆ"
+
+msgid "View"
+msgstr "ವೀಕ್ಷಿಸಿ"
+
+msgid "Previous"
+msgstr "ಹಿಂದಿನ"
+
+msgid "Next"
+msgstr "ಮುಂದಿನ"
+
+msgid "No predictions yet"
+msgstr "ಇನ್ನೂ ಯಾವುದೇ ಮುನ್ಸೂಚನೆಗಳಿಲ್ಲ"
+
+msgid "Upload your first leaf image to get started!"
+msgstr "ಪ್ರಾರಂಭಿಸಲು ನಿಮ್ಮ ಮೊದಲ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ!"
+
+msgid "Prediction Result"
+msgstr "ಮುನ್ಸೂಚನೆ ಫಲಿತಾಂಶ"
+
+msgid "Uploaded"
+msgstr "ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ"
+
+msgid "Healthy Plant"
+msgstr "ಆರೋಗ್ಯಕರ ಸಸ್ಯ"
+
+msgid "Disease Detected"
+msgstr "ರೋಗ ಪತ್ತೆಯಾಗಿದೆ"
+
+msgid "Crop:"
+msgstr "ಬೆಳೆ:"
+
+msgid "Disease:"
+msgstr "ರೋಗ:"
+
+msgid "Model Confidence:"
+msgstr "ಮಾದರಿ ವಿಶ್ವಾಸ:"
+
+msgid "This is the model's confidence in its prediction, not a certainty of disease presence."
+msgstr "ಇದು ಅದರ ಮುನ್ಸೂಚನೆಯಲ್ಲಿ ಮಾದರಿಯ ವಿಶ್ವಾಸವಾಗಿದೆ, ರೋಗದ ಉಪಸ್ಥಿತಿಯ ಖಚಿತತೆಯಲ್ಲ."
+
+msgid "Low Confidence Prediction:"
+msgstr "ಕಡಿಮೆ ವಿಶ್ವಾಸಾರ್ಹ ಮುನ್ಸೂಚನೆ:"
+
+msgid "The model is not very confident about this prediction."
+msgstr "ಈ ಮುನ್ಸೂಚನೆಯ ಬಗ್ಗೆ ಮಾದರಿಯು ತುಂಬಾ ವಿಶ್ವಾಸ ಹೊಂದಿಲ್ಲ."
+
+msgid "We recommend consulting a qualified agricultural expert for a reliable diagnosis."
+msgstr "ವಿಶ್ವಾಸಾರ್ಹ ರೋಗನಿರ್ಣಯಕ್ಕಾಗಿ ಅರ್ಹ ಕೃಷಿ ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಲು ನಾವು ಶಿಫಾರಸು ಮಾಡುತ್ತೇವೆ."
+
+msgid "About This Condition"
+msgstr "ಈ ಸ್ಥಿತಿಯ ಬಗ್ಗೆ"
+
+msgid "Symptoms"
+msgstr "ರೋಗಲಕ್ಷಣಗಳು"
+
+msgid "Recommended Treatments"
+msgstr "ಶಿಫಾರಸು ಮಾಡಿದ ಚಿಕಿತ್ಸೆಗಳು"
+
+msgid "Preventive Measures"
+msgstr "ತಡೆಗಟ್ಟುವ ಕ್ರಮಗಳು"
+
+msgid "Organic Treatments"
+msgstr "ಸಾವಯವ ಚಿಕಿತ್ಸೆಗಳು"
+
+msgid "Chemical Treatments"
+msgstr "ರಾಸಾಯನಿಕ ಚಿಕಿತ್ಸೆಗಳು"
+
+msgid "Safety Warnings:"
+msgstr "ಸುರಕ್ಷತಾ ಎಚ್ಚರಿಕೆಗಳು:"
+
+msgid "Disclaimer:"
+msgstr "ಹಕ್ಕು ನಿರಾಕರಣೆ:"
+
+msgid "These recommendations are for informational purposes only."
+msgstr "ಈ ಶಿಫಾರಸುಗಳು ಮಾಹಿತಿ ಉದ್ದೇಶಗಳಿಗಾಗಿ ಮಾತ್ರ."
+
+msgid "Always consult a qualified agricultural expert before applying any chemical treatments."
+msgstr "ಯಾವುದೇ ರಾಸಾಯನಿಕ ಚಿಕಿತ್ಸೆಗಳನ್ನು ಅನ್ವಯಿಸುವ ಮೊದಲು ಯಾವಾಗಲೂ ಅರ್ಹ ಕೃಷಿ ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಿ."
+
+msgid "Confidence Distribution"
+msgstr "ವಿಶ್ವಾಸ ಹಂಚಿಕೆ"
+
+msgid "New Prediction"
+msgstr "ಹೊಸ ಮುನ್ಸೂಚನೆ"
+
+msgid "View History"
+msgstr "ಇತಿಹಾಸ ವೀಕ್ಷಿಸಿ"
+
+msgid "My Reminders"
+msgstr "ನನ್ನ ಜ್ಞಾಪನೆಗಳು"
+
+msgid "New Reminder"
+msgstr "ಹೊಸ ಜ್ಞಾಪನೆ"
+
+msgid "Upcoming"
+msgstr "ಮುಂಬರುವ"
+
+msgid "Completed"
+msgstr "ಪೂರ್ಣಗೊಂಡಿದೆ"
+
+msgid "All caught up!"
+msgstr "ಎಲ್ಲವೂ ಪೂರ್ಣಗೊಂಡಿದೆ!"
+
+msgid "No upcoming tasks."
+msgstr "ಯಾವುದೇ ಮುಂಬರುವ ಕಾರ್ಯಗಳಿಲ್ಲ."
+
+msgid "No history"
+msgstr "ಯಾವುದೇ ಇತಿಹಾಸವಿಲ್ಲ"
+
+msgid "You haven't completed any reminders yet."
+msgstr "ನೀವು ಇನ್ನೂ ಯಾವುದೇ ಜ್ಞಾಪನೆಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿಲ್ಲ."
+
+msgid "Overdue"
+msgstr "ಅವಧಿ ಮೀರಿದೆ"
+
+msgid "Due:"
+msgstr "ಕಾರಣ:"
+
+msgid "Mark as Done"
+msgstr "ಮುಗಿದಿದೆ ಎಂದು ಗುರುತಿಸಿ"
+
+msgid "Done:"
+msgstr "ಮುಗಿದಿದೆ:"
+
+msgid "Register a New Plant"
+msgstr "ಹೊಸ ಸಸ್ಯವನ್ನು ನೋಂದಾಯಿಸಿ"
+
+msgid "Plant Nickname / Identifier"
+msgstr "ಸಸ್ಯದ ಅಡ್ಡಹೆಸರು / ಗುರುತಿಸುವಿಕೆ"
+
+msgid "e.g. Backyard Tomato #1, North Field Potatoes"
+msgstr "ಉದಾ. ಹಿತ್ತಲಿನ ಟೊಮೆಟೊ #1, ನಾರ್ತ್ ಫೀಲ್ಡ್ ಆಲೂಗಡ್ಡೆ"
+
+msgid "Crop Type"
+msgstr "ಬೆಳೆ ಪ್ರಕಾರ"
+
+msgid "Select crop type..."
+msgstr "ಬೆಳೆ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ..."
+
+msgid "Location (Optional)"
+msgstr "ಸ್ಥಳ (ಐಚ್ಛಿಕ)"
+
+msgid "e.g. Greenhouse A, Raised Bed 2"
+msgstr "ಉದಾ. ಗ್ರೀನ್‌ಹೌಸ್ ಎ, ರೈಸ್ಡ್ ಬೆಡ್ 2"
+
+msgid "Cancel"
+msgstr "ರದ್ದುಮಾಡಿ"
+
+msgid "Save Plant"
+msgstr "ಸಸ್ಯವನ್ನು ಉಳಿಸಿ"
+
+msgid "Weather conditions are optimal. Maintain your regular watering schedule."
+msgstr "ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಗಳು ಸೂಕ್ತವಾಗಿವೆ. ನಿಮ್ಮ ನಿಯಮಿತ ನೀರುಹಾಕುವ ವೇಳಾಪಟ್ಟಿಯನ್ನು ನಿರ್ವಹಿಸಿ."
+
+msgid "High temperature warning. Consider increasing irrigation frequency."
+msgstr "ಹೆಚ್ಚಿನ ತಾಪಮಾನ ಎಚ್ಚರಿಕೆ. ನೀರಾವರಿ ಆವರ್ತನವನ್ನು ಹೆಚ್ಚಿಸಲು ಪರಿಗಣಿಸಿ."
+
+msgid "Rain expected. You can pause irrigation for the next 24 hours."
+msgstr "ಮಳೆಯ ನಿರೀಕ್ಷೆಯಿದೆ. ಮುಂದಿನ 24 ಗಂಟೆಗಳ ಕಾಲ ನೀವು ನೀರಾವರಿ ವಿರಾಮಗೊಳಿಸಬಹುದು."
+
+msgid "Severe weather alert. Delay any fertilizer application."
+msgstr "ತೀವ್ರ ಹವಾಮಾನ ಎಚ್ಚರಿಕೆ. ಯಾವುದೇ ರಸಗೊಬ್ಬರ ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ವಿಳಂಬಗೊಳಿಸಿ."
+
+msgid "overcast clouds"
+msgstr "ಮೋಡ ಕವಿದ ಮೋಡಗಳು"
+
+msgid "clear sky"
+msgstr "ಸ್ವಚ್ಛ ಆಕಾಶ"
+
+msgid "few clouds"
+msgstr "ಕೆಲವು ಮೋಡಗಳು"
+
+msgid "scattered clouds"
+msgstr "ಚದುರಿದ ಮೋಡಗಳು"
+
+msgid "broken clouds"
+msgstr "ಮುರಿದ ಮೋಡಗಳು"
+
+msgid "light rain"
+msgstr "ಲಘು ಮಳೆ"
+
+msgid "Nearby"
+msgstr "ಹತ್ತಿರದ"
+
+msgid "Nearby Services"
+msgstr "ಹತ್ತಿರದ ಸೇವೆಗಳು"
+
+msgid "Locate Me"
+msgstr "ನನ್ನ ಸ್ಥಳವನ್ನು ಹುಡುಕಿ"
+
+msgid "Agri Stores"
+msgstr "ಕೃಷಿ ಮಳಿಗೆಗಳು"
+
+msgid "Experts"
+msgstr "ತಜ್ಞರು"
+
+msgid "Click "Locate Me" to find nearby agricultural stores."
+msgstr "ಹತ್ತಿರದ ಕೃಷಿ ಮಳಿಗೆಗಳನ್ನು ಹುಡುಕಲು 'ನನ್ನ ಸ್ಥಳವನ್ನು ಹುಡುಕಿ' ಕ್ಲಿಕ್ ಮಾಡಿ."
+
+msgid "Click "Locate Me" to find nearby agricultural experts."
+msgstr "ಹತ್ತಿರದ ಕೃಷಿ ತಜ್ಞರನ್ನು ಹುಡುಕಲು 'ನನ್ನ ಸ್ಥಳವನ್ನು ಹುಡುಕಿ' ಕ್ಲಿಕ್ ಮಾಡಿ."
+
+msgid "Geolocation is not supported by your browser"
+msgstr "ನಿಮ್ಮ ಬ್ರೌಸರ್ ಜಿಯೋಲೊಕೇಶನ್ ಅನ್ನು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ"
+
+msgid "Locating..."
+msgstr "ಸ್ಥಳವನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ..."
+
+msgid "Location found! Searching nearby services..."
+msgstr "ಸ್ಥಳ ಕಂಡುಬಂದಿದೆ! ಹತ್ತಿರದ ಸೇವೆಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ..."
+
+msgid "Located"
+msgstr "ಸ್ಥಳೀಯಗೊಂಡಿದೆ"
+
+msgid "Error fetching nearby data."
+msgstr "ಹತ್ತಿರದ ಡೇಟಾವನ್ನು ಪಡೆಯುವಲ್ಲಿ ದೋಷ."
+
+msgid "Unable to retrieve your location"
+msgstr "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ"
+
+msgid "No stores found nearby."
+msgstr "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ಮಳಿಗೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "No experts found nearby."
+msgstr "ಹತ್ತಿರದಲ್ಲಿ ಯಾವುದೇ ತಜ್ಞರು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "Directions"
+msgstr "ನಿರ್ದೇಶನಗಳು"
+
+msgid "Call"
+msgstr "ಕರೆ ಮಾಡಿ"
+
+msgid "Language"
+msgstr "ಭಾಷೆ"
+
+msgid "Logout"
+msgstr "ಲಾಗ್ ಔಟ್"
+
+msgid "Admin Dashboard"
+msgstr "ನಿರ್ವಾಹಕ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್"
+
+msgid "System analytics and user management."
+msgstr "ಸಿಸ್ಟಮ್ ಅನಾಲಿಟಿಕ್ಸ್ ಮತ್ತು ಬಳಕೆದಾರ ನಿರ್ವಹಣೆ."
+
+msgid "Total Users"
+msgstr "ಒಟ್ಟು ಬಳಕೆದಾರರು"
+
+msgid "Total Predictions"
+msgstr "ಒಟ್ಟು ಮುನ್ನೋಟಗಳು"
+
+msgid "Total Plants"
+msgstr "ಒಟ್ಟು ಸಸ್ಯಗಳು"
+
+msgid "Total Reminders"
+msgstr "ಒಟ್ಟು ಜ್ಞಾಪನೆಗಳು"
+
+msgid "User Management"
+msgstr "ಬಳಕೆದಾರ ನಿರ್ವಹಣೆ"
+
+msgid "Name"
+msgstr "ಹೆಸರು"
+
+msgid "Email"
+msgstr "ಇಮೇಲ್"
+
+msgid "Role"
+msgstr "ಪಾತ್ರ"
+
+msgid "Joined"
+msgstr "ಸೇರಿದ್ದಾರೆ"
+
+msgid "Actions"
+msgstr "ಕ್ರಿಯೆಗಳು"
+
+msgid "Admin"
+msgstr "ನಿರ್ವಾಹಕ"
+
+msgid "User"
+msgstr "ಬಳಕೆದಾರ"
+
+msgid "Suspend"
+msgstr "ಅಮಾನತುಗೊಳಿಸಿ"
+
+msgid "No users found."
+msgstr "ಯಾವುದೇ ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "Unsuspend"
+msgstr "ಮರುಸ್ಥಾಪಿಸಿ"
+
+msgid "Disease Management"
+msgstr "ರೋಗ ನಿರ್ವಹಣೆ"
+
+msgid "Manage diseases, symptoms, and treatments."
+msgstr "ರೋಗಗಳು, ಲಕ್ಷಣಗಳು ಮತ್ತು ಚಿಕಿತ್ಸೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ."
+
+msgid "Add Disease"
+msgstr "ರೋಗ ಸೇರಿಸಿ"
+
+msgid "Edit"
+msgstr "ತಿದ್ದುಪಡಿ"
+
+msgid "No diseases found in the database."
+msgstr "ಡೇಟಾಬೇಸ್‌ನಲ್ಲಿ ಯಾವುದೇ ರೋಗಗಳು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "Disease Details"
+msgstr "ರೋಗದ ವಿವರಗಳು"
+
+msgid "Class Name (ID)"
+msgstr "ವರ್ಗದ ಹೆಸರು (ಐಡಿ)"
+
+msgid "Display Name"
+msgstr "ಪ್ರದರ್ಶನ ಹೆಸರು"
+
+msgid "Crop"
+msgstr "ಬೆಳೆ"
+
+msgid "Description"
+msgstr "ವಿವರಣೆ"
+
+msgid "Symptoms (One per line)"
+msgstr "ಲಕ್ಷಣಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು)"
+
+msgid "Treatments"
+msgstr "ಚಿಕಿತ್ಸೆಗಳು"
+
+msgid "Prevention (One per line)"
+msgstr "ತಡೆಗಟ್ಟುವಿಕೆ (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು)"
+
+msgid "Chemical Control (One per line)"
+msgstr "ರಾಸಾಯನಿಕ ನಿಯಂತ್ರಣ (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು)"
+
+msgid "Biological Control (One per line)"
+msgstr "ಜೈವಿಕ ನಿಯಂತ್ರಣ (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು)"
+
+msgid "Cancel"
+msgstr "ರದ್ದುಗೊಳಿಸಿ"
+
+msgid "Save Changes"
+msgstr "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ"
+
+msgid "Back to Dashboard"
+msgstr "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹಿಂತಿರುಗಿ"
+
+msgid "Risk Rules Management"
+msgstr "ಅಪಾಯದ ನಿಯಮಗಳ ನಿರ್ವಹಣೆ"
+
+msgid "Risk Rules"
+msgstr "ಅಪಾಯದ ನಿಯಮಗಳು"
+
+msgid "Manage weather-based disease risk thresholds."
+msgstr "ಹವಾಮಾನ ಆಧಾರಿತ ರೋಗದ ಅಪಾಯದ ಮಿತಿಗಳನ್ನು ನಿರ್ವಹಿಸಿ."
+
+msgid "Add Rule"
+msgstr "ನಿಯಮ ಸೇರಿಸಿ"
+
+msgid "Are you sure you want to delete this rule?"
+msgstr "ಈ ನಿಯಮವನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?"
+
+msgid "Delete"
+msgstr "ಅಳಿಸಿ"
+
+msgid "No risk rules found."
+msgstr "ಯಾವುದೇ ಅಪಾಯದ ನಿಯಮಗಳು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "Risk Rule Details"
+msgstr "ಅಪಾಯದ ನಿಯಮದ ವಿವರಗಳು"
+
+msgid "Disease Class"
+msgstr "ರೋಗದ ವರ್ಗ"
+
+msgid "Min Temp (°C)"
+msgstr "ಕನಿಷ್ಠ ತಾಪಮಾನ (°C)"
+
+msgid "Max Temp (°C)"
+msgstr "ಗರಿಷ್ಠ ತಾಪಮಾನ (°C)"
+
+msgid "Min Humidity (%)"
+msgstr "ಕನಿಷ್ಠ ಆರ್ದ್ರತೆ (%)"
+
+msgid "Max Humidity (%)"
+msgstr "ಗರಿಷ್ಠ ಆರ್ದ್ರತೆ (%)"
+
+msgid "Weather Condition (Optional)"
+msgstr "ಹವಾಮಾನ ಸ್ಥಿತಿ (ಐಚ್ಛಿಕ)"
+
+msgid "Audit Logs"
+msgstr "ಆಡಿಟ್ ದಾಖಲೆಗಳು"
+
+msgid "Action"
+msgstr "ಕ್ರಮ"
+
+msgid "Target"
+msgstr "ಗುರಿ"
+
+msgid "Admin ID"
+msgstr "ನಿರ್ವಾಹಕ ಐಡಿ"
+
+msgid "Timestamp"
+msgstr "ಸಮಯ"
+
+msgid "No audit logs recorded yet."
+msgstr "ಇನ್ನೂ ಯಾವುದೇ ಆಡಿಟ್ ದಾಖಲೆಗಳು ದಾಖಲಾಗಿಲ್ಲ."
+
+
+msgid "Plant Disease Detection System - Home"
+msgstr "ಸಸ್ಯ ರೋಗ ಪತ್ತೆ ವ್ಯವಸ್ಥೆ - ಮುಖಪುಟ"
+
+msgid "Plant Disease Detection"
+msgstr "ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Upload a photo of your plant's leaf and our AI-powered system will help identify potential diseases. Get instant results with treatment recommendations."
+msgstr "ನಿಮ್ಮ ಸಸ್ಯದ ಎಲೆಯ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ನಮ್ಮ AI ವ್ಯವಸ್ಥೆಯು ರೋಗಗಳನ್ನು ಗುರುತಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ. ಚಿಕಿತ್ಸಾ ಶಿಫಾರಸುಗಳೊಂದಿಗೆ ತಕ್ಷಣದ ಫಲಿತಾಂಶಗಳನ್ನು ಪಡೆಯಿರಿ."
+
+msgid "Dashboard"
+msgstr "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್"
+
+msgid "Get Started"
+msgstr "ಪ್ರಾರಂಭಿಸಿ"
+
+msgid "Login"
+msgstr "ಲಾಗಿನ್"
+
+msgid "AI-Powered Plant Health Analysis"
+msgstr "AI-ಚಾಲಿತ ಸಸ್ಯ ಆರೋಗ್ಯ ವಿಶ್ಲೇಷಣೆ"
+
+msgid "How It Works"
+msgstr "ಇದು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ"
+
+msgid "Three simple steps to identify plant diseases"
+msgstr "ಸಸ್ಯ ರೋಗಗಳನ್ನು ಗುರುತಿಸಲು ಮೂರು ಸರಳ ಹಂತಗಳು"
+
+msgid "1. Upload Image"
+msgstr "1. ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"
+
+msgid "Take a clear photo of the affected leaf and upload it."
+msgstr "ಬಾಧಿತ ಎಲೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋ ತೆಗೆದು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."
+
+msgid "2. AI Analysis"
+msgstr "2. AI ವಿಶ್ಲೇಷಣೆ"
+
+msgid "Our CNN model analyzes the leaf image for disease patterns."
+msgstr "ನಮ್ಮ CNN ಮಾದರಿಯು ರೋಗದ ಲಕ್ಷಣಗಳಿಗಾಗಿ ಎಲೆಯ ಚಿತ್ರವನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತದೆ."
+
+msgid "3. Get Results"
+msgstr "3. ಫಲಿತಾಂಶಗಳನ್ನು ಪಡೆಯಿರಿ"
+
+msgid "Receive disease identification, confidence score, and treatment advice."
+msgstr "ರೋಗ ಗುರುತಿಸುವಿಕೆ, ವಿಶ್ವಾಸಾರ್ಹತೆ ಸ್ಕೋರ್ ಮತ್ತು ಚಿಕಿತ್ಸೆಯ ಸಲಹೆಯನ್ನು ಪಡೆಯಿರಿ."
+
+msgid "Currently Supported Crops"
+msgstr "ಪ್ರಸ್ತುತ ಬೆಂಬಲಿತ ಬೆಳೆಗಳು"
+
+msgid "Our model is trained on specific crop diseases from the PlantVillage dataset"
+msgstr "ನಮ್ಮ ಮಾದರಿಯು PlantVillage ಡೇಟಾಸೆಟ್‌ನಿಂದ ನಿರ್ದಿಷ್ಟ ಬೆಳೆ ರೋಗಗಳ ಮೇಲೆ ತರಬೇತಿ ಪಡೆದಿದೆ"
+
+msgid "Pepper Bell"
+msgstr "ಕ್ಯಾಪ್ಸಿಕಂ / ಬೆಲ್ ಪೆಪ್ಪರ್"
+
+msgid "Healthy"
+msgstr "ಆರೋಗ್ಯಕರ"
+
+msgid "Bacterial Spot"
+msgstr "ಬ್ಯಾಕ್ಟೀರಿಯಾದ ಚುಕ್ಕೆ ರೋಗ"
+
+msgid "Potato"
+msgstr "ಆಲೂಗಡ್ಡೆ"
+
+msgid "Early Blight"
+msgstr "ಮುಂಚಿನ ಅಂಗಮಾರಿ ರೋಗ"
+
+msgid "Late Blight"
+msgstr "ತಡವಾದ ಅಂಗಮಾರಿ ರೋಗ"
+
+msgid "This tool provides AI-based predictions for educational and research purposes. It is not a substitute for professional agricultural advice. Always consult a qualified agricultural expert for critical decisions."
+msgstr "ಈ ಸಾಧನವು ಶೈಕ್ಷಣಿಕ ಮತ್ತು ಸಂಶೋಧನಾ ಉದ್ದೇಶಗಳಿಗಾಗಿ AI-ಆಧಾರಿತ ಮುನ್ಸೂಚನೆಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ. ಇದು ವೃತ್ತಿಪರ ಕೃಷಿ ಸಲಹೆಗೆ ಪರ್ಯಾಯವಲ್ಲ. ನಿರ್ಣಾಯಕ ನಿರ್ಧಾರಗಳಿಗಾಗಿ ಯಾವಾಗಲೂ ಅರ್ಹ ಕೃಷಿ ತಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಿ."
+
+msgid "Login - Plant Disease Detection"
+msgstr "ಲಾಗಿನ್ - ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Email Address"
+msgstr "ಇಮೇಲ್ ವಿಳಾಸ"
+
+msgid "Enter your email"
+msgstr "ನಿಮ್ಮ ಇಮೇಲ್ ನಮೂದಿಸಿ"
+
+msgid "Password"
+msgstr "ಪಾಸ್‌ವರ್ಡ್"
+
+msgid "Forgot password?"
+msgstr "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?"
+
+msgid "Enter your password"
+msgstr "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ"
+
+msgid "Don't have an account?"
+msgstr "ಖಾತೆ ಇಲ್ಲವೇ?"
+
+msgid "Register here"
+msgstr "ಇಲ್ಲಿ ನೋಂದಾಯಿಸಿ"
+
+msgid "Register - Plant Disease Detection"
+msgstr "ನೋಂದಣಿ - ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Create Account"
+msgstr "ಖಾತೆಯನ್ನು ರಚಿಸಿ"
+
+msgid "Full Name"
+msgstr "ಪೂರ್ಣ ಹೆಸರು"
+
+msgid "Enter your full name"
+msgstr "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರನ್ನು ನಮೂದಿಸಿ"
+
+msgid "Minimum 6 characters"
+msgstr "ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳು"
+
+msgid "Register"
+msgstr "ನೋಂದಣಿ"
+
+msgid "Already have an account?"
+msgstr "ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರಾ?"
+
+msgid "Login here"
+msgstr "ಇಲ್ಲಿ ಲಾಗಿನ್ ಮಾಡಿ"
+
+msgid "Forgot Password - Plant Disease Detection"
+msgstr "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ - ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Reset Password"
+msgstr "ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ"
+
+msgid "Enter your email address and we will send you a link to reset your password."
+msgstr "ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ ಮತ್ತು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಲು ನಾವು ಲಿಂಕ್ ಕಳುಹಿಸುತ್ತೇವೆ."
+
+msgid "Send Reset Link"
+msgstr "ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿ"
+
+msgid "Remember your password?"
+msgstr "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ನೆನಪಿದೆಯೇ?"
+
+msgid "Reset Password - Plant Disease Detection"
+msgstr "ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ - ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Create New Password"
+msgstr "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ರಚಿಸಿ"
+
+msgid "New Password"
+msgstr "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್"
+
+msgid "Update Password"
+msgstr "ಪಾಸ್‌ವರ್ಡ್ ನವೀಕರಿಸಿ"
+
+msgid "Reviews - Plant Disease Detection"
+msgstr "ವಿಮರ್ಶೆಗಳು - ಸಸ್ಯ ರೋಗ ಪತ್ತೆ"
+
+msgid "Reviews & Feedback"
+msgstr "ವಿಮರ್ಶೆಗಳು ಮತ್ತು ಪ್ರತಿಕ್ರಿಯೆ"
+
+msgid "Write a Review"
+msgstr "ವಿಮರ್ಶೆ ಬರೆಯಿರಿ"
+
+msgid "Rating"
+msgstr "ರೇಟಿಂಗ್"
+
+msgid "Your Feedback"
+msgstr "ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ"
+
+msgid "Share your experience..."
+msgstr "ನಿಮ್ಮ ಅನುಭವವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ..."
+
+msgid "Submit Review"
+msgstr "ವಿಮರ್ಶೆ ಸಲ್ಲಿಸಿ"
+
+msgid "No reviews yet"
+msgstr "ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆಗಳಿಲ್ಲ"
+
+msgid "Be the first to share your experience!"
+msgstr "ನಿಮ್ಮ ಅನುಭವವನ್ನು ಹಂಚಿಕೊಳ್ಳುವವರಲ್ಲಿ ಮೊದಲಿಗರಾಗಿರಿ!"
+
+msgid "Take a photo or upload an image to identify crop diseases instantly"
+msgstr "ಬೆಳೆ ರೋಗಗಳನ್ನು ತಕ್ಷಣ ಗುರುತಿಸಲು ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ ಅಥವಾ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"
+
+msgid "Add a Leaf Photo"
+msgstr "ಎಲೆಯ ಫೋಟೋ ಸೇರಿಸಿ"
+
+msgid "Take a live photo with your camera or select from device"
+msgstr "ನಿಮ್ಮ ಕ್ಯಾಮೆರಾದೊಂದಿಗೆ ಲೈವ್ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ ಅಥವಾ ಸಾಧನದಿಂದ ಆಯ್ಕೆಮಾಡಿ"
+
+msgid "Take Photo"
+msgstr "ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ"
+
+msgid "Choose from Files"
+msgstr "ಫೈಲ್‌ಗಳಿಂದ ಆಯ್ಕೆಮಾಡಿ"
+
+msgid "Ready"
+msgstr "ಸಿದ್ಧವಾಗಿದೆ"
+
+msgid "Retake / Change"
+msgstr "ಮರು-ತೆಗೆದುಕೊಳ್ಳಿ / ಬದಲಾಯಿಸಿ"
+
+msgid "Remove"
+msgstr "ತೆಗೆದುಹಾಕಿ"
+
+msgid "Supported: JPG, JPEG, PNG"
+msgstr "ಬೆಂಬಲಿತ: JPG, JPEG, PNG"
+
+msgid "Max Size: 10MB"
+msgstr "ಗರಿಷ್ಠ ಗಾತ್ರ: 10MB"
+
+msgid "Camera Viewfinder"
+msgstr "ಕ್ಯಾಮೆರಾ ವ್ಯೂಫೈಂಡರ್"
+
+msgid "Align leaf in center"
+msgstr "ಎಲೆಯನ್ನು ಮಧ್ಯದಲ್ಲಿ ಹೊಂದಿಸಿ"
+
+msgid "Unable to access camera"
+msgstr "ಕ್ಯಾಮೆರಾವನ್ನು ಪ್ರವೇಶಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ"
+
+msgid "Please check permissions or use your device camera directly."
+msgstr "ದಯವಿಟ್ಟು ಅನುಮತಿಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಸಾಧನದ ಕ್ಯಾಮೆರಾವನ್ನು ನೇರವಾಗಿ ಬಳಸಿ."
+
+msgid "Open Device Camera"
+msgstr "ಸಾಧನದ ಕ್ಯಾಮೆರಾ ತೆರೆಯಿರಿ"
+
+msgid "Switch Camera"
+msgstr "ಕ್ಯಾಮೆರಾ ಬದಲಾಯಿಸಿ"
+
+msgid "Capture Photo"
+msgstr "ಫೋಟೋ ಸೆರೆಹಿಡಿಯಿರಿ"
+
+msgid "Analyzing..."
+msgstr "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ..."
+
+msgid "Back"
+msgstr "ಹಿಂದೆ"
+
+msgid "total"
+msgstr "ಒಟ್ಟು"
+
+msgid "Tour"
+msgstr "ಪ್ರವಾಸ"
+
+msgid "App Guide & Tour"
+msgstr "ಅಪ್ಲಿಕೇಶನ್ ಮಾರ್ಗದರ್ಶಿ ಮತ್ತು ಪ್ರವಾಸ"
+
+msgid "Welcome to PlantCare"
+msgstr "PlantCare ಗೆ ಸುಸ್ವಾಗತ"
+
+msgid "Welcome,"
+msgstr "ಸುಸ್ವಾಗತ,"
+
+msgid "Here is a quick 1-minute guide to help you detect plant diseases, monitor crops, and protect your farm."
+msgstr "ಸಸ್ಯ ರೋಗಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಲು, ಬೆಳೆಗಳನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಲು ಮತ್ತು ನಿಮ್ಮ ಕೃಷಿಯನ್ನು ರಕ್ಷಿಸಲು ಸಹಾಯ ಮಾಡುವ 1-ನಿಮಿಷದ ಮಾರ್ಗದರ್ಶಿ ಇಲ್ಲಿದೆ."
+
+msgid "Instant AI Disease Diagnosis"
+msgstr "ತ್ವರಿತ AI ರೋಗ ಪತ್ತೆ"
+
+msgid "Capture leaf photos directly using camera"
+msgstr "ಕ್ಯಾಮೆರಾ ಬಳಸಿ ನೇರವಾಗಿ ಎಲೆಯ ಫೋಟೋಗಳನ್ನು ಸೆರೆಹಿಡಿಯಿರಿ"
+
+msgid "Weather & Irrigation Advisory"
+msgstr "ಹವಾಮಾನ ಮತ್ತು ನೀರಾವರಿ ಸಲಹೆ"
+
+msgid "Live forecasts & proactive disease risk alerts"
+msgstr "ಲೈವ್ ಮುನ್ಸೂಚನೆಗಳು ಮತ್ತು ಮುನ್ನೆಚ್ಚರಿಕೆ ರೋಗ ಅಪಾಯ ಎಚ್ಚರಿಕೆಗಳು"
+
+msgid "Nearby Agri Stores & Pathologists"
+msgstr "ಹತ್ತಿರದ ಕೃಷಿ ಮಳಿಗೆಗಳು ಮತ್ತು ತಜ್ಞರು"
+
+msgid "Locate agricultural cooperatives within 50 km"
+msgstr "50 ಕಿ.ಮೀ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಕೃಷಿ ಮಳಿಗೆಗಳನ್ನು ಹುಡುಕಿ"
+
+msgid "1. Farm Dashboard & Live Weather"
+msgstr "1. ಕೃಷಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಮತ್ತು ಲೈವ್ ಹವಾಮಾನ"
+
+msgid "Your main control center! Check real-time temperature, humidity, rainfall forecasts, and automated disease risk alerts tailored to your crops."
+msgstr "ನಿಮ್ಮ ಮುಖ್ಯ ನಿಯಂತ್ರಣ ಕೇಂದ್ರ! ನೈಜ ಸಮಯದ ತಾಪಮಾನ, ತೇವಾಂಶ, ಮಳೆ ಮುನ್ಸೂಚನೆಗಳು ಮತ್ತು ನಿಮ್ಮ ಬೆಳೆಗಳಿಗೆ ಸೂಕ್ತವಾದ ರೋಗ ಅಪಾಯ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ."
+
+msgid "Tip: Receive daily irrigation recommendations based on today’s weather."
+msgstr "ಸಲಹೆ: ಇಂದಿನ ಹವಾಮಾನದ ಆಧಾರದ ಮೇಲೆ ದೈನಂದಿನ ನೀರಾವರಿ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ."
+
+msgid "2. Instant AI Disease Detection"
+msgstr "2. ತ್ವರಿತ AI ರೋಗ ಪತ್ತೆ"
+
+msgid "Tap the Scan tab to take a photo of any unhealthy plant leaf directly using your device camera or upload from your gallery."
+msgstr "ನಿಮ್ಮ ಸಾಧನದ ಕ್ಯಾಮೆರಾ ಬಳಸಿ ಯಾವುದೇ ಬಾಧಿತ ಎಲೆಯ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಲು ಅಥವಾ ಗ್ಯಾಲರಿಯಿಂದ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಸ್ಕ್ಯಾನ್ ಟ್ಯಾಬ್ ಒತ್ತಿರಿ."
+
+msgid "Get instant confidence ratings plus both chemical and organic treatment instructions!"
+msgstr "ತ್ವರಿತ ನಿಖರತೆಯ ರೇಟಿಂಗ್‌ಗಳು ಮತ್ತು ರಾಸಾಯನಿಕ ಹಾಗೂ ಸಾವಯವ ಚಿಕಿತ್ಸಾ ಸೂಚನೆಗಳನ್ನು ಪಡೆಯಿರಿ!"
+
+msgid "3. Crop Management & Digital Log"
+msgstr "3. ಬೆಳೆ ನಿರ್ವಹಣೆ ಮತ್ತು ಡಿಜಿಟಲ್ ಲಾಗ್"
+
+msgid "Register your fields and crops under the Crops tab. Keep track of variety types, planting dates, soil health logs, and growth milestones."
+msgstr "ಬೆಳೆಗಳ ಟ್ಯಾಬ್ ಅಡಿಯಲ್ಲಿ ನಿಮ್ಮ ಕ್ಷೇತ್ರಗಳು ಮತ್ತು ಬೆಳೆಗಳನ್ನು ನೋಂದಾಯಿಸಿ. ತಳಿ ಪ್ರಕಾರಗಳು, ಬಿತ್ತನೆ ದಿನಾಂಕಗಳು ಮತ್ತು ಬೆಳವಣಿಗೆಯ ಹಂತಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ."
+
+msgid "4. Nearby Agri Stores & Experts"
+msgstr "4. ಹತ್ತಿರದ ಕೃಷಿ ಮಳಿಗೆಗಳು ಮತ್ತು ತಜ್ಞರು"
+
+msgid "Under the Nearby tab, click \"Locate Me\" once to discover agrochemical stores, seed centers, and agricultural specialists within 50 km."
+msgstr "ಹತ್ತಿರದ ಟ್ಯಾಬ್ ಅಡಿಯಲ್ಲಿ, 50 ಕಿ.ಮೀ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಕೃಷಿ ಮಳಿಗೆಗಳು, ಬೀಜ ಕೇಂದ್ರಗಳು ಮತ್ತು ತಜ್ಞರನ್ನು ಹುಡುಕಲು ಒಮ್ಮೆ \"ನನ್ನನ್ನು ಪತ್ತೆ ಮಾಡಿ\" ಕ್ಲಿಕ್ ಮಾಡಿ."
+
+msgid "Your location is saved automatically so you never have to locate yourself again!"
+msgstr "ನಿಮ್ಮ ಸ್ಥಳವು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಉಳಿಸಲ್ಪಡುತ್ತದೆ ಆದ್ದರಿಂದ ನೀವು ಮತ್ತೆ ನಿಮ್ಮನ್ನು ಪತ್ತೆಹಚ್ಚಬೇಕಾಗಿಲ್ಲ!"
+
+msgid "5. Farm Reminders & Care Tasks"
+msgstr "5. ಕೃಷಿ ಜ್ಞಾಪನೆಗಳು ಮತ್ತು ಆರೈಕೆ ಕಾರ್ಯಗಳು"
+
+msgid "Never forget to spray fungicides, water seedlings, or harvest your yield. Schedule tasks with due dates under the Tasks tab."
+msgstr "ಶಿಲೀಂಧ್ರನಾಶಕಗಳನ್ನು ಸಿಂಪಡಿಸಲು, ಮೊಳಕೆಗಳಿಗೆ ನೀರುಣಿಸಲು ಅಥವಾ ಕೊಯ್ಲು ಮಾಡಲು ಎಂದಿಗೂ ಮರೆಯಬೇಡಿ. ಕಾರ್ಯಗಳ ಟ್ಯಾಬ್ ಅಡಿಯಲ್ಲಿ ದಿನಾಂಕಗಳೊಂದಿಗೆ ಕಾರ್ಯಗಳನ್ನು ನಿಗದಿಪಡಿಸಿ."
+
+msgid "6. Regional Languages & Help"
+msgstr "6. ಪ್ರಾದೇಶಿಕ ಭಾಷೆಗಳು ಮತ್ತು ಸಹಾಯ"
+
+msgid "Switch between English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी) anytime in the top bar. You can also re-launch this tour anytime by tapping the \"Tour\" button!"
+msgstr "ಮೇಲಿನ ಬಾರ್‌ನಲ್ಲಿ ಯಾವುದೇ ಸಮಯದಲ್ಲಿ ಇಂಗ್ಲಿಷ್, ಕನ್ನಡ ಮತ್ತು ಹಿಂದಿ ನಡುವೆ ಬದಲಿಸಿ. ನೀವು \"ಪ್ರವಾಸ\" ಬಟನ್ ಟ್ಯಾಪ್ ಮಾಡುವ ಮೂಲಕ ಯಾವುದೇ ಸಮಯದಲ್ಲಿ ಈ ಪ್ರವಾಸವನ್ನು ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಬಹುದು!"
+
+msgid "Start Tour"
+msgstr "ಪ್ರವಾಸ ಪ್ರಾರಂಭಿಸಿ"
+
+msgid "Finish Tour"
+msgstr "ಪ್ರವಾಸ ಮುಗಿಸಿ"
+
+msgid "Skip"
+msgstr "ಬಿಟ್ಟುಬಿಡಿ"

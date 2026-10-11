@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}Nearby Location Services - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+                    <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+                </button>
+                <h2 class="mb-0"><i class="fas fa-map-marker-alt text-danger me-2"></i> {{ _('Nearby Services') }}</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button id="locate-btn" class="btn btn-outline-danger rounded-pill px-3 shadow-sm">
+                    <i class="fas fa-location-arrow me-1"></i> {{ _('Locate Me') }}
+                </button>
+            </div>
+        </div>
+
+        <div id="status-message" class="alert alert-info text-center shadow-sm" style="display: none;"></div>
+
+        <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1 shadow-sm" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill text-success fw-bold" id="pills-stores-tab" data-bs-toggle="pill" data-bs-target="#pills-stores" type="button" role="tab" aria-controls="pills-stores" aria-selected="true">
+                    <i class="fas fa-store me-2"></i>{{ _('Agri Stores') }}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill text-primary fw-bold" id="pills-experts-tab" data-bs-toggle="pill" data-bs-target="#pills-experts" type="button" role="tab" aria-controls="pills-experts" aria-selected="false">
+                    <i class="fas fa-user-md me-2"></i>{{ _('Experts') }}
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Stores Tab -->
+            <div class="tab-pane fade show active" id="pills-stores" role="tabpanel" aria-labelledby="pills-stores-tab">
+                <div id="stores-container" class="row">
+                    <!-- Data injected via JS -->
+                    <div class="col-12 text-center text-muted py-5">
+                        <i class="fas fa-map-marked-alt fa-3x mb-3 text-light"></i>
+                        <p>{{ _('Click "Locate Me" to find nearby agricultural stores.') }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Experts Tab -->
+            <div class="tab-pane fade" id="pills-experts" role="tabpanel" aria-labelledby="pills-experts-tab">
+                <div id="experts-container" class="row">
+                    <!-- Data injected via JS -->
+                    <div class="col-12 text-center text-muted py-5">
+                        <i class="fas fa-user-friends fa-3x mb-3 text-light"></i>
+                        <p>{{ _('Click "Locate Me" to find nearby agricultural experts.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const locateBtn = document.getElementById('locate-btn');
+    const statusMsg = document.getElementById('status-message');
+    const storesContainer = document.getElementById('stores-container');
+    const expertsContainer = document.getElementById('experts-container');
+
+    const STORAGE_KEY_LOCATION = 'plantcare_user_location';
+    const STORAGE_KEY_DATA = 'plantcare_nearby_cache';
+
+    function setLocatedState(isLocated) {
+        if (isLocated) {
+            locateBtn.innerHTML = '<i class="fas fa-check-circle me-1"></i> {{ _("Located") }}';
+            locateBtn.className = 'btn btn-outline-success rounded-pill px-3 shadow-sm';
+            locateBtn.disabled = false;
+        } else {
+            locateBtn.innerHTML = '<i class="fas fa-location-arrow me-1"></i> {{ _("Locate Me") }}';
+            locateBtn.className = 'btn btn-outline-danger rounded-pill px-3 shadow-sm';
+            locateBtn.disabled = false;
+        }
+    }
+
+    function showStatus(message, type) {
+        statusMsg.style.display = 'block';
+        statusMsg.className = `alert alert-${type} text-center shadow-sm`;
+        statusMsg.innerHTML = message;
+    }
+
+    function hideStatus() {
+        statusMsg.style.display = 'none';
+    }
+
+    function renderStores(stores) {
+        if (!stores || stores.length === 0) {
+            storesContainer.innerHTML = '<div class="col-12 text-center text-muted py-4">{{ _("No stores found nearby.") }}</div>';
+            return;
+        }
+        
+        let html = '';
+        stores.forEach(s => {
+            const dist = typeof s.distance === 'number' ? s.distance.toFixed(1) : s.distance;
+            html += `
+            <div class="col-md-6 mb-3">
+                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 12px; transition: transform 0.2s;">
+                    <div class="card-body">
+                        <h5 class="card-title text-success fw-bold"><i class="fas fa-store-alt me-2"></i>${s.name}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${s.type || ''}</h6>
+                        <p class="card-text small mb-1"><i class="fas fa-map-pin me-2 text-danger"></i>${s.address || ''}</p>
+                        <p class="card-text small mb-3"><i class="fas fa-phone-alt me-2 text-primary"></i>${s.phone || ''}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2"><i class="fas fa-route me-1"></i>${dist} km</span>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${s.location.lat},${s.location.lng}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success rounded-pill px-4">
+                                <i class="fas fa-directions me-1"></i> {{ _("Directions") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        storesContainer.innerHTML = html;
+    }
+
+    function renderExperts(experts) {
+        if (!experts || experts.length === 0) {
+            expertsContainer.innerHTML = '<div class="col-12 text-center text-muted py-4">{{ _("No experts found nearby.") }}</div>';
+            return;
+        }
+        
+        let html = '';
+        experts.forEach(e => {
+            const dist = typeof e.distance === 'number' ? e.distance.toFixed(1) : e.distance;
+            const phoneDigits = (e.phone || '').replace(/[^0-9+]/g, '');
+            html += `
+            <div class="col-md-6 mb-3">
+                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 12px; transition: transform 0.2s;">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold"><i class="fas fa-user-tie me-2"></i>${e.name}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${e.specialty || ''}</h6>
+                        <p class="card-text small mb-1"><i class="fas fa-map-pin me-2 text-danger"></i>${e.address || ''}</p>
+                        <p class="card-text small mb-3"><i class="fas fa-phone-alt me-2 text-success"></i>${e.phone || ''}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2"><i class="fas fa-route me-1"></i>${dist} km</span>
+                            <a href="tel:${phoneDigits}" class="btn btn-sm btn-primary rounded-pill px-4">
+                                <i class="fas fa-phone-alt me-1"></i> {{ _("Call") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        expertsContainer.innerHTML = html;
+    }
+
+    function fetchNearbyData(lat, lng, showLoadingUI = true) {
+        if (showLoadingUI) {
+            showStatus('{{ _("Location found! Searching nearby services...") }}', 'success');
+        }
+
+        fetch(`/location/api/nearby?lat=${lat}&lng=${lng}&radius=50`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showStatus(data.error, 'danger');
+                    setLocatedState(false);
+                    return;
+                }
+
+                hideStatus();
+                setLocatedState(true);
+
+                // Persist in localStorage so it never disappears on page navigation
+                try {
+                    localStorage.setItem(STORAGE_KEY_LOCATION, JSON.stringify({
+                        lat: lat,
+                        lng: lng,
+                        timestamp: Date.now()
+                    }));
+                    localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify({
+                        stores: data.stores,
+                        experts: data.experts,
+                        timestamp: Date.now()
+                    }));
+                } catch (err) {
+                    console.warn('Failed to save to localStorage:', err);
+                }
+
+                renderStores(data.stores);
+                renderExperts(data.experts);
+            })
+            .catch(err => {
+                console.error(err);
+                if (showLoadingUI) {
+                    showStatus('{{ _("Error fetching nearby data.") }}', 'danger');
+                    setLocatedState(false);
+                }
+            });
+    }
+
+    function loadSavedLocation() {
+        try {
+            const savedDataStr = localStorage.getItem(STORAGE_KEY_DATA);
+            const savedLocStr = localStorage.getItem(STORAGE_KEY_LOCATION);
+
+            if (savedDataStr && savedLocStr) {
+                const data = JSON.parse(savedDataStr);
+                const loc = JSON.parse(savedLocStr);
+
+                if (data.stores && data.experts) {
+                    renderStores(data.stores);
+                    renderExperts(data.experts);
+                    setLocatedState(true);
+
+                    // Silently refresh in background if cache is older than 30 minutes
+                    const ageMs = Date.now() - (data.timestamp || 0);
+                    if (ageMs > 30 * 60 * 1000 && loc.lat && loc.lng) {
+                        fetchNearbyData(loc.lat, loc.lng, false);
+                    }
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.warn('Error reading from localStorage:', e);
+        }
+        return false;
+    }
+
+    function startGeolocation() {
+        if (!navigator.geolocation) {
+            showStatus('{{ _("Geolocation is not supported by your browser") }}', 'danger');
+            return;
+        }
+
+        locateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> {{ _("Locating...") }}';
+        locateBtn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                fetchNearbyData(lat, lng, true);
+            },
+            function(err) {
+                console.warn('Geolocation error:', err);
+                showStatus('{{ _("Unable to retrieve your location") }}', 'danger');
+                setLocatedState(false);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 8000,
+                maximumAge: 60000
+            }
+        );
+    }
+
+    locateBtn.addEventListener('click', function() {
+        startGeolocation();
+    });
+
+    // 1. Immediately restore cached location from localStorage
+    const restored = loadSavedLocation();
+
+    // 2. Fallback to server saved coordinates if localStorage is empty
+    {% if saved_coords %}
+    if (!restored) {
+        fetchNearbyData({{ saved_coords.lat }}, {{ saved_coords.lng }}, false);
+    }
+    {% endif %}
+});
+</script>
+
+<style>
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+.nav-pills .nav-link.active {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+}
+</style>
+{% endblock %}

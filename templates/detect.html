@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Detect Plant Disease') }} - PlantCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+                    <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+                </button>
+                <div>
+                    <h2 class="mb-1 fw-bold text-dark">
+                        <i class="fas fa-microscope text-success me-2"></i>{{ _('Detect Plant Disease') }}
+                    </h2>
+                    <p class="text-muted mb-0 small">{{ _('Take a photo or upload an image to identify crop diseases instantly') }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('predictions.history') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="fas fa-history me-1"></i>{{ _('View History') }}
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('predictions.detect') }}" enctype="multipart/form-data" id="detectForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                    <!-- Main Upload & Camera Area -->
+                    <div class="mb-4 text-center">
+                        <!-- Dropzone & Viewfinder Area -->
+                        <div id="dropZone" class="leaf-dropzone border border-2 border-dashed rounded-4 p-4 mb-3 position-relative"
+                             style="min-height: 270px; background-color: #fbfdfc; transition: all 0.25s ease;">
+                            
+                            <!-- Empty / Prompt State -->
+                            <div id="emptyPrompt" class="py-4">
+                                <div class="upload-icon-wrapper mb-3 mx-auto">
+                                    <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-camera text-success fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="fw-semibold text-dark mb-1">{{ _('Add a Leaf Photo') }}</h5>
+                                <p class="text-muted small mb-4">{{ _('Take a live photo with your camera or select from device') }}</p>
+                                
+                                <!-- Action Buttons -->
+                                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                    <button type="button" class="btn btn-success px-4 py-2 rounded-pill shadow-sm" id="btnLiveCamera">
+                                        <i class="fas fa-camera me-2"></i>{{ _('Take Photo') }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success px-4 py-2 rounded-pill" id="btnBrowseFile">
+                                        <i class="fas fa-images me-2"></i>{{ _('Choose from Files') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Image Preview State (hidden by default) -->
+                            <div id="previewContainer" style="display: none;">
+                                <div class="position-relative d-inline-block">
+                                    <img id="previewImage" src="" alt="Selected leaf" class="img-fluid rounded-3 shadow-sm" style="max-height: 320px; object-fit: contain;">
+                                    <span class="badge bg-success position-absolute top-0 end-0 m-2 px-2 py-1 shadow-sm">
+                                        <i class="fas fa-check-circle me-1"></i>{{ _('Ready') }}
+                                    </span>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="small text-muted mb-2 fw-medium" id="fileInfoText"></p>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" id="btnRetake">
+                                            <i class="fas fa-redo me-1"></i>{{ _('Retake / Change') }}
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" id="btnRemove">
+                                            <i class="fas fa-trash-alt me-1"></i>{{ _('Remove') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden File Inputs -->
+                        <!-- Primary form file input submitted to backend -->
+                        <input type="file" class="d-none" id="leaf_image" name="leaf_image" accept=".jpg,.jpeg,.png" required>
+                        <!-- Mobile native camera input fallback (opens camera app directly on mobile OS) -->
+                        <input type="file" class="d-none" id="native_camera_input" accept="image/*" capture="environment">
+
+                        <div class="d-flex justify-content-between align-items-center text-muted small px-1">
+                            <span><i class="fas fa-check-shield me-1"></i>{{ _('Supported: JPG, JPEG, PNG') }}</span>
+                            <span>{{ _('Max Size: 10MB') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Helpful Scanning Tips -->
+                    <div class="card border-0 bg-light rounded-3 mb-4">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-lightbulb text-warning me-2 fs-5"></i>
+                                <span class="fw-semibold text-dark small">{{ _('Tips for best results:') }}</span>
+                            </div>
+                            <ul class="text-muted small mb-0 ps-3">
+                                <li>{{ _('Take a clear, well-lit photo of the affected leaf') }}</li>
+                                <li>{{ _('Ensure the leaf fills most of the image') }}</li>
+                                <li>{{ _('Avoid blurry or dark images') }}</li>
+                                <li>{{ _('Currently supports: Pepper Bell and Potato diseases') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 py-3 rounded-pill fw-semibold shadow-sm" id="submitBtn" disabled>
+                        <i class="fas fa-search me-2"></i> {{ _('Analyze Leaf') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Camera Modal -->
+<div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="cameraModalLabel">
+                    <i class="fas fa-camera text-success me-2"></i>{{ _('Camera Viewfinder') }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btnCloseCameraModal"></button>
+            </div>
+            <div class="modal-body p-3 p-md-4">
+                <!-- Camera Video Container -->
+                <div class="position-relative bg-dark rounded-4 overflow-hidden d-flex align-items-center justify-content-center" style="min-height: 340px; max-height: 480px; background-color: #0b0f19 !important;">
+                    <video id="cameraVideo" autoplay playsinline muted class="w-100 h-100" style="object-fit: cover; max-height: 460px;"></video>
+                    
+                    <!-- Viewfinder framing guidelines overlay -->
+                    <div id="viewfinderGuide" class="position-absolute w-75 h-75 rounded-4 d-flex align-items-center justify-content-center pointer-events-none"
+                         style="border: 2px dashed rgba(255, 255, 255, 0.75); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4); pointer-events: none;">
+                        <span class="text-white small px-3 py-1 rounded-pill bg-dark bg-opacity-75">
+                            <i class="fas fa-leaf text-success me-1"></i>{{ _('Align leaf in center') }}
+                        </span>
+                    </div>
+
+                    <!-- Camera Error / Fallback State -->
+                    <div id="cameraErrorBox" class="position-absolute p-4 text-center text-white w-100" style="display: none; background: rgba(15, 23, 42, 0.95); z-index: 10;">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h6 class="fw-semibold mb-2" id="cameraErrorMessage">{{ _('Unable to access camera') }}</h6>
+                        <p class="small text-light opacity-75 mb-3">{{ _('Please check permissions or use your device camera directly.') }}</p>
+                        <button type="button" class="btn btn-success rounded-pill px-4" id="btnFallbackCamera">
+                            <i class="fas fa-camera me-2"></i>{{ _('Open Device Camera') }}
+                        </button>
+                    </div>
+
+                    <!-- Hidden Canvas for frame snapshot -->
+                    <canvas id="cameraCanvas" class="d-none"></canvas>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-3" id="btnSwitchCamera" style="display: none;">
+                    <i class="fas fa-sync-alt me-1"></i>{{ _('Switch Camera') }}
+                </button>
+                <div class="d-flex gap-2 ms-auto">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                        {{ _('Cancel') }}
+                    </button>
+                    <button type="button" class="btn btn-success rounded-pill px-4" id="btnCapture">
+                        <i class="fas fa-camera me-2"></i>{{ _('Capture Photo') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function() {
+        const dropZone = document.getElementById('dropZone');
+        const emptyPrompt = document.getElementById('emptyPrompt');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const fileInfoText = document.getElementById('fileInfoText');
+        const leafInput = document.getElementById('leaf_image');
+        const nativeCameraInput = document.getElementById('native_camera_input');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnLiveCamera = document.getElementById('btnLiveCamera');
+        const btnBrowseFile = document.getElementById('btnBrowseFile');
+        const btnRetake = document.getElementById('btnRetake');
+        const btnRemove = document.getElementById('btnRemove');
+        const detectForm = document.getElementById('detectForm');
+
+        // Modal and Camera stream elements
+        const cameraModalEl = document.getElementById('cameraModal');
+        const cameraModal = new bootstrap.Modal(cameraModalEl);
+        const cameraVideo = document.getElementById('cameraVideo');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const btnCapture = document.getElementById('btnCapture');
+        const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+        const cameraErrorBox = document.getElementById('cameraErrorBox');
+        const btnFallbackCamera = document.getElementById('btnFallbackCamera');
+        const viewfinderGuide = document.getElementById('viewfinderGuide');
+
+        let cameraStream = null;
+        let currentFacingMode = 'environment'; // Prefer rear camera for scanning plants
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+        }
+
+        function showPreview(dataUrl, fileName, fileSize) {
+            previewImage.src = dataUrl;
+            fileInfoText.textContent = `${fileName} (${formatBytes(fileSize)})`;
+            emptyPrompt.style.display = 'none';
+            previewContainer.style.display = 'block';
+            submitBtn.disabled = false;
+        }
+
+        function resetSelection() {
+            leafInput.value = '';
+            nativeCameraInput.value = '';
+            previewImage.src = '';
+            fileInfoText.textContent = '';
+            previewContainer.style.display = 'none';
+            emptyPrompt.style.display = 'block';
+            submitBtn.disabled = true;
+        }
+
+        // File browser trigger
+        btnBrowseFile.addEventListener('click', () => {
+            leafInput.click();
+        });
+
+        leafInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    showPreview(evt.target.result, file.name, file.size);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Mobile native camera input trigger
+        nativeCameraInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Sync to primary form input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                leafInput.files = dt.files;
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    showPreview(evt.target.result, file.name || 'camera_photo.jpg', file.size);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Retake and remove actions
+        btnRetake.addEventListener('click', () => {
+            openCameraOrFallback();
+        });
+
+        btnRemove.addEventListener('click', () => {
+            resetSelection();
+        });
+
+        // Drag & drop support
+        ['dragenter', 'dragover'].forEach(name => {
+            dropZone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('border-success', 'bg-light');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(name => {
+            dropZone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('border-success', 'bg-light');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (!file.type.match(/^image\/(png|jpeg|jpg)$/)) {
+                    alert('Please select a PNG or JPG image file.');
+                    return;
+                }
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                leafInput.files = dt.files;
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    showPreview(evt.target.result, file.name, file.size);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Camera stream lifecycle
+        async function startCamera() {
+            stopCamera();
+            cameraErrorBox.style.display = 'none';
+            viewfinderGuide.style.display = 'flex';
+            btnCapture.disabled = false;
+
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: currentFacingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                };
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                cameraVideo.srcObject = cameraStream;
+                await cameraVideo.play();
+
+                if (navigator.mediaDevices.enumerateDevices) {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoInputs = devices.filter(d => d.kind === 'videoinput');
+                    btnSwitchCamera.style.display = (videoInputs.length > 1) ? 'inline-block' : 'none';
+                }
+            } catch (err) {
+                console.warn('Camera stream failed:', err);
+                viewfinderGuide.style.display = 'none';
+                cameraErrorBox.style.display = 'block';
+                btnCapture.disabled = true;
+                btnSwitchCamera.style.display = 'none';
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            if (cameraVideo) {
+                cameraVideo.srcObject = null;
+            }
+        }
+
+        function openCameraOrFallback() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                cameraModal.show();
+                startCamera();
+            } else {
+                nativeCameraInput.click();
+            }
+        }
+
+        btnLiveCamera.addEventListener('click', openCameraOrFallback);
+
+        btnFallbackCamera.addEventListener('click', () => {
+            cameraModal.hide();
+            nativeCameraInput.click();
+        });
+
+        btnSwitchCamera.addEventListener('click', () => {
+            currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+            startCamera();
+        });
+
+        cameraModalEl.addEventListener('hidden.bs.modal', () => {
+            stopCamera();
+        });
+
+        // Capture frame from video
+        btnCapture.addEventListener('click', () => {
+            if (!cameraVideo.videoWidth || !cameraVideo.videoHeight) return;
+
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+            const ctx = cameraCanvas.getContext('2d');
+            ctx.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            cameraCanvas.toBlob((blob) => {
+                if (!blob) return;
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                const fileName = `camera_leaf_${timestamp}.jpg`;
+                const file = new File([blob], fileName, { type: 'image/jpeg' });
+
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                leafInput.files = dt.files;
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    showPreview(evt.target.result, fileName, file.size);
+                };
+                reader.readAsDataURL(file);
+
+                stopCamera();
+                cameraModal.hide();
+            }, 'image/jpeg', 0.95);
+        });
+
+        // Submit form spinner
+        detectForm.addEventListener('submit', () => {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> {{ _("Analyzing...") }}';
+            submitBtn.disabled = true;
+        });
+    })();
+</script>
+{% endblock %}

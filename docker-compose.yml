@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: plant_disease_web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - APP_ENV=production
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY:-production-strong-secret-key-change-this}
+      - MONGODB_URI=mongodb://db:27017/
+      - DATABASE_NAME=plant_disease_db
+      - WEATHER_API_KEY=${WEATHER_API_KEY:-}
+      - MAPS_API_KEY=${MAPS_API_KEY:-}
+      - LOG_LEVEL=INFO
+      - LOG_FORMAT=json
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - plant_care_net
+
+  db:
+    image: mongo:7.0
+    container_name: plant_disease_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=plant_disease_db
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - plant_care_net
+
+volumes:
+  mongodb_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  plant_care_net:
+    driver: bridge

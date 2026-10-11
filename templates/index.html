@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Plant Disease Detection System - Home') }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center py-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-success">
+            <i class="fas fa-leaf"></i> {{ _('Plant Disease Detection') }}
+        </h1>
+        <p class="lead text-muted mt-3">
+            {{ _("Upload a photo of your plant's leaf and our AI-powered system will help identify potential diseases. Get instant results with treatment recommendations.") }}
+        </p>
+        <div class="mt-4">
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('predictions.detect') }}" class="btn btn-success btn-lg me-2">
+                <i class="fas fa-camera"></i> {{ _('Detect Disease') }}
+            </a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-success btn-lg">
+                <i class="fas fa-tachometer-alt"></i> {{ _('Dashboard') }}
+            </a>
+            {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-success btn-lg me-2">
+                <i class="fas fa-user-plus"></i> {{ _('Get Started') }}
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-success btn-lg">
+                <i class="fas fa-sign-in-alt"></i> {{ _('Login') }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6 text-center mt-4 mt-lg-0">
+        <div class="hero-image-placeholder bg-light rounded-4 p-5">
+            <i class="fas fa-seedling text-success" style="font-size: 8rem; opacity: 0.6;"></i>
+            <p class="text-muted mt-3">{{ _('AI-Powered Plant Health Analysis') }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+        <h2 class="fw-bold">{{ _('How It Works') }}</h2>
+        <p class="text-muted">{{ _('Three simple steps to identify plant diseases') }}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3"
+                     style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h5>{{ _('1. Upload Image') }}</h5>
+                <p class="text-muted">{{ _('Take a clear photo of the affected leaf and upload it.') }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3"
+                     style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h5>{{ _('2. AI Analysis') }}</h5>
+                <p class="text-muted">{{ _('Our CNN model analyzes the leaf image for disease patterns.') }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="card-body">
+                <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3"
+                     style="width: 80px; height: 80px; line-height: 80px; font-size: 2rem;">
+                    <i class="fas fa-notes-medical"></i>
+                </div>
+                <h5>{{ _('3. Get Results') }}</h5>
+                <p class="text-muted">{{ _('Receive disease identification, confidence score, and treatment advice.') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Supported Crops -->
+<div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+        <h2 class="fw-bold">{{ _('Currently Supported Crops') }}</h2>
+        <p class="text-muted">{{ _('Our model is trained on specific crop diseases from the PlantVillage dataset') }}</p>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-success mb-3">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-pepper-hot"></i> {{ _('Pepper Bell') }}
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check-circle text-success"></i> {{ _('Healthy') }}</li>
+                <li class="list-group-item"><i class="fas fa-exclamation-circle text-danger"></i> {{ _('Bacterial Spot') }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-success mb-3">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-carrot"></i> {{ _('Potato') }}
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check-circle text-success"></i> {{ _('Healthy') }}</li>
+                <li class="list-group-item"><i class="fas fa-exclamation-circle text-warning"></i> {{ _('Early Blight') }}</li>
+                <li class="list-group-item"><i class="fas fa-exclamation-circle text-danger"></i> {{ _('Late Blight') }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>{{ _('Disclaimer:') }}</strong> {{ _('This tool provides AI-based predictions for educational and research purposes. It is not a substitute for professional agricultural advice. Always consult a qualified agricultural expert for critical decisions.') }}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Risk Rules Management - PlantCare{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 mb-3">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-link text-muted px-0 text-decoration-none">
+            <i class="fas fa-arrow-left me-1"></i> {{ _('Back to Dashboard') }}
+        </a>
+    </div>
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold text-dark"><i class="fas fa-bolt text-warning me-2"></i> {{ _('Risk Rules') }}</h2>
+            <p class="text-muted">{{ _('Manage weather-based disease risk thresholds.') }}</p>
+        </div>
+        <button class="btn btn-warning rounded-pill px-4 shadow-sm text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#ruleModal" onclick="resetForm()">
+            <i class="fas fa-plus me-1"></i> {{ _('Add Rule') }}
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    {% for r in rules %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; border-left: 5px solid #ffc107 !important;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <h5 class="card-title fw-bold text-dark mb-0">{{ r.disease_class }}</h5>
+                    <span class="badge bg-success rounded-pill align-self-start">{{ r.crop }}</span>
+                </div>
+                
+                <div class="row mt-3 text-muted small">
+                    <div class="col-6 mb-2">
+                        <i class="fas fa-temperature-high text-danger me-1"></i> 
+                        Temp: {{ r.min_temp }}°C - {{ r.max_temp }}°C
+                    </div>
+                    <div class="col-6 mb-2">
+                        <i class="fas fa-tint text-info me-1"></i> 
+                        Hum: {{ r.min_humidity }}% - {{ r.max_humidity }}%
+                    </div>
+                    {% if r.condition %}
+                    <div class="col-12">
+                        <i class="fas fa-cloud text-secondary me-1"></i> 
+                        Condition: {{ r.condition }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick='editRule({{ r|tojson|safe }})'>
+                        <i class="fas fa-edit me-1"></i> {{ _('Edit') }}
+                    </button>
+                    <form action="{{ url_for('admin.delete_risk_rule') }}" method="POST" class="d-inline" onsubmit="return confirm('{{ _('Are you sure you want to delete this rule?') }}')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="disease_class" value="{{ r.disease_class }}">
+                        <input type="hidden" name="crop" value="{{ r.crop }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                            <i class="fas fa-trash-alt me-1"></i> {{ _('Delete') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="fas fa-clipboard-list fa-3x mb-3 text-light"></i>
+        <p>{{ _('No risk rules found.') }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Rule Modal -->
+<div class="modal fade" id="ruleModal" tabindex="-1" aria-labelledby="ruleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0" style="border-radius: 16px;">
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold" id="ruleModalLabel">{{ _('Risk Rule Details') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin.update_risk_rule') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Disease Class') }}</label>
+                            <input type="text" class="form-control" name="disease_class" id="disease_class" required placeholder="e.g. tomato_blight">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Crop') }}</label>
+                            <input type="text" class="form-control" name="crop" id="crop" required placeholder="e.g. Tomato">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">{{ _('Min Temp') }} (°C)</label>
+                            <input type="number" step="0.1" class="form-control" name="min_temp" id="min_temp">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">{{ _('Max Temp') }} (°C)</label>
+                            <input type="number" step="0.1" class="form-control" name="max_temp" id="max_temp">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">{{ _('Min Humidity') }} (%)</label>
+                            <input type="number" step="0.1" class="form-control" name="min_humidity" id="min_humidity">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">{{ _('Max Humidity') }} (%)</label>
+                            <input type="number" step="0.1" class="form-control" name="max_humidity" id="max_humidity">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">{{ _('Weather Condition (Optional)') }}</label>
+                            <input type="text" class="form-control" name="condition" id="condition" placeholder="e.g. rain">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4"><i class="fas fa-save me-1"></i> {{ _('Save Changes') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const modal = new bootstrap.Modal(document.getElementById('ruleModal'));
+    
+    function resetForm() {
+        document.getElementById('disease_class').value = '';
+        document.getElementById('disease_class').readOnly = false;
+        document.getElementById('crop').value = '';
+        document.getElementById('crop').readOnly = false;
+        document.getElementById('min_temp').value = '';
+        document.getElementById('max_temp').value = '';
+        document.getElementById('min_humidity').value = '';
+        document.getElementById('max_humidity').value = '';
+        document.getElementById('condition').value = '';
+    }
+
+    function editRule(r) {
+        document.getElementById('disease_class').value = r.disease_class;
+        document.getElementById('disease_class').readOnly = true;
+        document.getElementById('crop').value = r.crop;
+        document.getElementById('crop').readOnly = true;
+        document.getElementById('min_temp').value = r.min_temp;
+        document.getElementById('max_temp').value = r.max_temp;
+        document.getElementById('min_humidity').value = r.min_humidity;
+        document.getElementById('max_humidity').value = r.max_humidity;
+        document.getElementById('condition').value = r.condition || '';
+        
+        modal.show();
+    }
+</script>
+{% endblock %}

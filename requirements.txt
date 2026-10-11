@@ -1,0 +1,30 @@
+# Core Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Database
+pymongo[srv,tls]==4.5.0
+certifi>=2023.7.22
+dnspython>=2.4.0
+pyOpenSSL
+service_identity
+
+# ML / Image Processing
+tensorflow
+keras
+opencv-python
+Pillow
+numpy
+
+# Utilities
+python-dotenv==1.0.0
+bcrypt==4.0.1
+Flask-WTF==1.2.1
+email-validator==2.1.0.post1
+Flask-Babel==4.0.0
+requests>=2.31.0
+gunicorn>=21.2.0
+
+# Testing & Dev
+pytest>=8.0.0
+mongomock>=4.3.0
