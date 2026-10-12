@@ -92,39 +92,93 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderStores(stores) {
+        let currentLoc = { lat: 12.9716, lng: 77.5946 };
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_LOCATION) || '{}');
+            if (saved.lat && saved.lng) currentLoc = saved;
+        } catch(e) {}
+
+        const gmapsSearchUrl = `https://www.google.com/maps/search/agricultural+store+fertilizer+seed+near+me/@${currentLoc.lat},${currentLoc.lng},13z`;
+
         if (!stores || stores.length === 0) {
-            storesContainer.innerHTML = '<div class="col-12 text-center text-muted py-4">{{ _("No stores found nearby.") }}</div>';
+            storesContainer.innerHTML = `
+            <div class="col-12 py-3">
+                <div class="card border-0 bg-white shadow-sm p-4 text-center rounded-4">
+                    <div class="rounded-circle bg-success-subtle text-success mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="fas fa-store-slash fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ _('No Registered Partner Stores Found Within 50 km') }}</h5>
+                    <p class="text-muted small mb-3">{{ _('You can locate all local agrochemical stores, fertilizer depots, and seed centers directly via Google Maps.') }}</p>
+                    <a href="${gmapsSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-success rounded-pill px-4 mx-auto shadow-sm">
+                        <i class="fas fa-map-marked-alt me-2"></i>{{ _('Search Stores Near Me on Google Maps') }}
+                    </a>
+                </div>
+            </div>`;
             return;
         }
         
         let html = '';
         stores.forEach(s => {
             const dist = typeof s.distance === 'number' ? s.distance.toFixed(1) : s.distance;
+            const destLat = s.location ? s.location.lat : currentLoc.lat;
+            const destLng = s.location ? s.location.lng : currentLoc.lng;
             html += `
             <div class="col-md-6 mb-3">
-                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 12px; transition: transform 0.2s;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success fw-bold"><i class="fas fa-store-alt me-2"></i>${s.name}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${s.type || ''}</h6>
-                        <p class="card-text small mb-1"><i class="fas fa-map-pin me-2 text-danger"></i>${s.address || ''}</p>
-                        <p class="card-text small mb-3"><i class="fas fa-phone-alt me-2 text-primary"></i>${s.phone || ''}</p>
+                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 14px; transition: transform 0.2s;">
+                    <div class="card-body p-3 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title text-success fw-bold mb-0"><i class="fas fa-store-alt me-2"></i>${s.name}</h6>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 small"><i class="fas fa-route me-1"></i>${dist} km</span>
+                        </div>
+                        <p class="text-muted small mb-1 fw-medium">${s.type || 'Agricultural Inputs'}</p>
+                        <p class="card-text small mb-2 text-secondary"><i class="fas fa-map-marker-alt me-1 text-danger"></i>${s.address || ''}</p>
+                        ${s.phone ? `<p class="card-text small mb-3"><a href="tel:${s.phone.replace(/[^0-9+]/g, '')}" class="text-decoration-none text-dark"><i class="fas fa-phone-alt me-2 text-primary"></i>${s.phone}</a></p>` : ''}
                         
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2"><i class="fas fa-route me-1"></i>${dist} km</span>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${s.location.lat},${s.location.lng}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success rounded-pill px-4">
+                        <div class="d-flex gap-2 mt-auto pt-2">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success rounded-pill flex-fill">
                                 <i class="fas fa-directions me-1"></i> {{ _("Directions") }}
                             </a>
+                            ${s.phone ? `<a href="tel:${s.phone.replace(/[^0-9+]/g, '')}" class="btn btn-sm btn-success rounded-pill px-3"><i class="fas fa-phone-alt"></i></a>` : ''}
                         </div>
                     </div>
                 </div>
             </div>`;
         });
+
+        // Add Google Maps discovery button at bottom of list
+        html += `
+        <div class="col-12 mt-2 mb-4 text-center">
+            <a href="${gmapsSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
+                <i class="fab fa-google me-1"></i> {{ _('Open More Stores on Google Maps') }}
+            </a>
+        </div>`;
+
         storesContainer.innerHTML = html;
     }
 
     function renderExperts(experts) {
+        let currentLoc = { lat: 12.9716, lng: 77.5946 };
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_LOCATION) || '{}');
+            if (saved.lat && saved.lng) currentLoc = saved;
+        } catch(e) {}
+
+        const gmapsExpertsUrl = `https://www.google.com/maps/search/krishi+vigyan+kendra+agricultural+university+near+me/@${currentLoc.lat},${currentLoc.lng},13z`;
+
         if (!experts || experts.length === 0) {
-            expertsContainer.innerHTML = '<div class="col-12 text-center text-muted py-4">{{ _("No experts found nearby.") }}</div>';
+            expertsContainer.innerHTML = `
+            <div class="col-12 py-3">
+                <div class="card border-0 bg-white shadow-sm p-4 text-center rounded-4">
+                    <div class="rounded-circle bg-primary-subtle text-primary mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="fas fa-user-md fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ _('Kisan Call Center: 1800-180-1551') }}</h5>
+                    <p class="text-muted small mb-3">{{ _('Toll-free 24/7 government agricultural expert advisory available in 22 regional languages.') }}</p>
+                    <a href="tel:18001801551" class="btn btn-primary rounded-pill px-4 mx-auto shadow-sm">
+                        <i class="fas fa-phone-alt me-2"></i>{{ _('Call Toll-Free Kisan Helpline') }}
+                    </a>
+                </div>
+            </div>`;
             return;
         }
         
@@ -132,25 +186,45 @@ document.addEventListener('DOMContentLoaded', function() {
         experts.forEach(e => {
             const dist = typeof e.distance === 'number' ? e.distance.toFixed(1) : e.distance;
             const phoneDigits = (e.phone || '').replace(/[^0-9+]/g, '');
+            const isNational = e.is_national || (phoneDigits && phoneDigits.startsWith('1800'));
             html += `
             <div class="col-md-6 mb-3">
-                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 12px; transition: transform 0.2s;">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary fw-bold"><i class="fas fa-user-tie me-2"></i>${e.name}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${e.specialty || ''}</h6>
-                        <p class="card-text small mb-1"><i class="fas fa-map-pin me-2 text-danger"></i>${e.address || ''}</p>
-                        <p class="card-text small mb-3"><i class="fas fa-phone-alt me-2 text-success"></i>${e.phone || ''}</p>
+                <div class="card h-100 shadow-sm border-0 bg-white" style="border-radius: 14px; transition: transform 0.2s;">
+                    <div class="card-body p-3 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title text-primary fw-bold mb-0"><i class="fas fa-user-md me-2"></i>${e.name}</h6>
+                            ${isNational ? 
+                                '<span class="badge bg-warning text-dark rounded-pill px-2 py-1 small"><i class="fas fa-bolt me-1"></i>Toll-Free 24/7</span>' :
+                                `<span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1 small"><i class="fas fa-route me-1"></i>${dist} km</span>`
+                            }
+                        </div>
+                        <p class="text-muted small mb-1 fw-medium">${e.specialty || 'Plant Pathologist'}</p>
+                        <p class="card-text small mb-2 text-secondary"><i class="fas fa-map-marker-alt me-1 text-danger"></i>${e.address || ''}</p>
+                        ${e.phone ? `<p class="card-text small mb-3"><a href="tel:${phoneDigits}" class="text-decoration-none text-dark fw-bold"><i class="fas fa-phone-alt me-2 text-success"></i>${e.phone}</a></p>` : ''}
                         
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2"><i class="fas fa-route me-1"></i>${dist} km</span>
-                            <a href="tel:${phoneDigits}" class="btn btn-sm btn-primary rounded-pill px-4">
-                                <i class="fas fa-phone-alt me-1"></i> {{ _("Call") }}
-                            </a>
+                        <div class="d-flex gap-2 mt-auto pt-2">
+                            ${phoneDigits ? `
+                            <a href="tel:${phoneDigits}" class="btn btn-sm btn-primary rounded-pill flex-fill">
+                                <i class="fas fa-phone-alt me-1"></i> {{ _("Call Now") }}
+                            </a>` : ''}
+                            ${e.location ? `
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${e.location.lat},${e.location.lng}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                <i class="fas fa-directions"></i>
+                            </a>` : ''}
                         </div>
                     </div>
                 </div>
             </div>`;
         });
+
+        // Add KVK search on Google Maps
+        html += `
+        <div class="col-12 mt-2 mb-4 text-center">
+            <a href="${gmapsExpertsUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
+                <i class="fab fa-google me-1"></i> {{ _('Find Krishi Vigyan Kendras on Google Maps') }}
+            </a>
+        </div>`;
+
         expertsContainer.innerHTML = html;
     }
 

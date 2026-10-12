@@ -1,85 +1,132 @@
 import os
+import certifi
 from pymongo import MongoClient
+from dotenv import load_dotenv
 
 def seed_locations():
-    # Connect to MongoDB
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["plant_disease_db"]
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+    db_name = os.getenv("DATABASE_NAME", "plant_disease_db")
+    print(f"Connecting to MongoDB: {mongo_uri[:35]}... (DB: {db_name})")
     
-    # Dummy Experts in/around Bengaluru
+    kwargs = {}
+    if "mongodb+srv" in mongo_uri or "ssl=true" in mongo_uri.lower():
+        kwargs["tlsCAFile"] = certifi.where()
+
+    client = MongoClient(mongo_uri, **kwargs)
+    db = client[db_name]
+    
+    # Experts in/around Bengaluru and Karnataka agricultural universities
     experts = [
         {
-            "name": "Dr. Ramesh Kumar",
-            "specialty": "Plant Pathology",
-            "phone": "+91 98765 43210",
+            "name": "Dr. Ramesh Kumar (UAS Bengaluru)",
+            "specialty": "Plant Pathology & Crop Protection",
+            "phone": "+91 80 2333 0153",
             "address": "GKVK Campus, Bellary Road, Bengaluru",
-            "location": {"lat": 13.0763, "lng": 77.5753}
+            "location": {"lat": 13.0763, "lng": 77.5753},
+            "is_national": False
         },
         {
-            "name": "Kisan Call Center",
-            "specialty": "General Agriculture Advisory",
+            "name": "Kisan Call Center (National Agri Helpline)",
+            "specialty": "24/7 Expert Farmer Helpline (Free)",
             "phone": "1800-180-1551",
-            "address": "Hebbal, Bengaluru",
-            "location": {"lat": 13.0354, "lng": 77.5971}
+            "address": "Toll Free All India / Hebbal Center, Bengaluru",
+            "location": {"lat": 13.0354, "lng": 77.5971},
+            "is_national": True
+        },
+        {
+            "name": "Krishi Vigyan Kendra (KVK Bengaluru)",
+            "specialty": "Agronomy & Integrated Pest Management",
+            "phone": "+91 80 2363 7235",
+            "address": "Hadonahalli, Doddaballapura / Hebbal, Bengaluru",
+            "location": {"lat": 13.0421, "lng": 77.5892},
+            "is_national": False
+        },
+        {
+            "name": "ICAR - Indian Institute of Horticultural Research (IIHR)",
+            "specialty": "Horticulture & Fruit/Vegetable Diseases",
+            "phone": "+91 80 2308 6100",
+            "address": "Hessaraghatta Lake Post, Bengaluru",
+            "location": {"lat": 13.1362, "lng": 77.4975},
+            "is_national": False
         },
         {
             "name": "Agri Clinic & Agri Business Centre",
-            "specialty": "Pest Management",
+            "specialty": "Pest & Disease Management Clinic",
             "phone": "+91 80 2345 6789",
-            "address": "Yelahanka, Bengaluru",
-            "location": {"lat": 13.1007, "lng": 77.5963}
+            "address": "Yelahanka New Town, Bengaluru",
+            "location": {"lat": 13.1007, "lng": 77.5963},
+            "is_national": False
         },
         {
-            "name": "Dr. Sunita Sharma",
-            "specialty": "Horticulture",
+            "name": "Dr. Sunita Sharma (Horticulture Specialist)",
+            "specialty": "Foliar Diseases & Organic Cultivation",
             "phone": "+91 91234 56789",
-            "address": "Whitefield, Bengaluru",
-            "location": {"lat": 12.9698, "lng": 77.7499}
+            "address": "ITPL Main Road, Whitefield, Bengaluru",
+            "location": {"lat": 12.9698, "lng": 77.7499},
+            "is_national": False
         }
     ]
     
-    # Dummy Stores in/around Bengaluru
+    # Stores in/around Bengaluru
     stores = [
         {
-            "name": "Sri Lakshmi Agri Inputs",
-            "type": "Fertilizers & Pesticides",
+            "name": "Sri Lakshmi Agro Inputs & Seeds",
+            "type": "Fertilizers, Bio-pesticides & Seeds",
             "phone": "+91 99887 76655",
-            "address": "KR Market, Bengaluru",
+            "address": "KR Market Main Road, Bengaluru",
             "location": {"lat": 12.9632, "lng": 77.5746}
         },
         {
-            "name": "Kisan Agro Kendra",
-            "type": "Seeds & Fertilizers",
+            "name": "Kisan Agro Kendra & Supplies",
+            "type": "Certified Seeds & Crop Medicines",
             "phone": "+91 98765 12345",
-            "address": "Yeshwanthpur, Bengaluru",
+            "address": "Near APMC Yard, Yeshwanthpur, Bengaluru",
             "location": {"lat": 13.0285, "lng": 77.5409}
         },
         {
             "name": "Green Earth Farm Store",
-            "type": "Organic Farming Supplies",
+            "type": "Neem Oil, Trichoderma & Organic Inputs",
             "phone": "+91 88990 01122",
-            "address": "Jayanagar, Bengaluru",
+            "address": "4th Block, Jayanagar, Bengaluru",
             "location": {"lat": 12.9299, "lng": 77.5824}
         },
         {
-            "name": "Farmers Co-op Society",
-            "type": "General Farm Inputs",
+            "name": "Farmers Co-operative Society (Raitha Seva)",
+            "type": "Subsidized Fertilizers & Sprayers",
             "phone": "+91 80 2233 4455",
-            "address": "Malleswaram, Bengaluru",
+            "address": "Sampige Road, Malleswaram, Bengaluru",
             "location": {"lat": 13.0031, "lng": 77.5714}
+        },
+        {
+            "name": "Annapurna Agro Agencies",
+            "type": "Micro-nutrients, Fungicides & Tools",
+            "phone": "+91 80 2856 1122",
+            "address": "BB Road, Yelahanka, Bengaluru",
+            "location": {"lat": 13.1022, "lng": 77.5988}
+        },
+        {
+            "name": "Karnataka Agro Chemicals",
+            "type": "Plant Protection Chemicals & Drip Spares",
+            "phone": "+91 98450 12890",
+            "address": "Peenya 2nd Stage, Bengaluru",
+            "location": {"lat": 13.0322, "lng": 77.5188}
         }
     ]
     
     db.experts.drop()
     db.stores.drop()
+    db.agricultural_stores.drop()
     
     if experts:
         db.experts.insert_many(experts)
-        print(f"Inserted {len(experts)} experts.")
+        print(f"Inserted {len(experts)} experts into 'experts' collection.")
         
     if stores:
         db.stores.insert_many(stores)
-        print(f"Inserted {len(stores)} stores.")
+        # also populate agricultural_stores alias so any query works
+        db.agricultural_stores.insert_many(stores)
+        print(f"Inserted {len(stores)} stores into 'stores' and 'agricultural_stores'.")
 
 if __name__ == "__main__":
     seed_locations()

@@ -2,18 +2,23 @@
 {% block title %}Dashboard - Plant Disease Detection{% endblock %}
 
 {% block content %}
-<!-- Welcome -->
-<div class="mb-4">
-    <h2 class="fw-bold mb-1">{{ _('Welcome back') }},</h2>
-    <h4 class="text-secondary fw-normal">{{ session.get('user_name', 'Farmer') }}</h4>
+<!-- Welcome Banner -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <p class="text-muted small mb-0">{{ _('Welcome back,') }}</p>
+        <h4 class="fw-bold mb-0 text-dark">{{ session.get('user_name', 'Farmer') }}</h4>
+    </div>
+    <a href="{{ url_for('predictions.detect') }}" class="btn btn-success rounded-pill px-3 shadow-sm d-flex align-items-center gap-2">
+        <i class="fas fa-camera"></i> <span>{{ _('Scan Leaf') }}</span>
+    </a>
 </div>
 
 <!-- Risk Alerts -->
 {% if active_alerts %}
-<div class="mb-4">
+<div class="mb-3">
     {% for alert in active_alerts %}
-    <div class="alert alert-{{ alert.severity }} alert-dismissible fade show rounded-4 border-0" role="alert">
-        <strong><i class="fas fa-exclamation-triangle"></i> {{ alert.title }}</strong>
+    <div class="alert alert-{{ alert.severity }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-2" role="alert">
+        <strong><i class="fas fa-exclamation-triangle me-1"></i> {{ alert.title }}</strong>
         <p class="mb-0 mt-1 small">{{ alert.message }}</p>
         <form action="{{ url_for('risk_engine.dismiss_alert', alert_id=alert._id) }}" method="POST" class="d-inline">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -25,118 +30,119 @@
 {% endif %}
 
 <!-- Weather Widget -->
-<div class="card mb-4 bg-white">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="card mb-3 bg-white shadow-sm border-0" style="border-radius: 16px;">
+    <div class="card-body p-3 p-sm-4">
+        <div class="d-flex justify-content-between align-items-center">
             <div>
                 <p class="text-muted mb-0 small text-uppercase fw-semibold tracking-wide">
                     <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ city|title }}
                 </p>
-                <h2 class="display-5 fw-bold mb-0">
-                    {{ weather.temp|round(1) }}°
+                <h2 class="display-6 fw-bold mb-0">
+                    {{ weather.temp|round(1) }}°C
                 </h2>
-                <p class="text-muted mb-0">{{ _(weather.description) }}</p>
+                <p class="text-muted small mb-0">{{ _(weather.description) }}</p>
             </div>
             <div>
                 {% if weather.icon %}
-                    <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" alt="Weather" width="100">
+                    <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="Weather" width="70" height="70">
                 {% else %}
-                    <i class="fas fa-cloud-sun fa-4x text-info"></i>
+                    <i class="fas fa-cloud-sun fa-3x text-warning"></i>
                 {% endif %}
             </div>
         </div>
         
-        <div class="bg-light p-3 rounded-4 mt-3">
-            <p class="mb-1 fw-bold text-success"><i class="fas fa-tint me-1"></i> {{ _('Irrigation Advice') }}</p>
+        <div class="bg-light p-2 p-sm-3 rounded-3 mt-3">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="small fw-bold text-success"><i class="fas fa-tint me-1"></i> {{ _('Irrigation Advice') }}</span>
+                <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none small" data-bs-toggle="modal" data-bs-target="#locationModal">
+                    <i class="fas fa-edit me-1"></i>{{ _('Change') }}
+                </button>
+            </div>
             <p class="mb-0 text-muted small">{{ _(irrigation_advice) }}</p>
         </div>
-        
-        <div class="mt-3 text-end">
-            <button class="btn btn-sm btn-light rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#locationModal">
-                {{ _('Change Location') }}
-            </button>
+    </div>
+</div>
+
+<!-- Compact Stats Row (3 Columns Side-by-Side) -->
+<div class="row g-2 mb-3">
+    <div class="col-4">
+        <div class="card border-0 bg-white shadow-sm h-100 text-center p-2 rounded-3">
+            <span class="text-success fs-5"><i class="fas fa-qrcode"></i></span>
+            <h4 class="fw-bold mb-0 text-dark mt-1">{{ total_predictions }}</h4>
+            <span class="text-muted" style="font-size: 0.72rem;">{{ _('My Scans') }}</span>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card border-0 bg-white shadow-sm h-100 text-center p-2 rounded-3" role="button" data-bs-toggle="modal" data-bs-target="#supportedCropsModal" title="Click to view crops">
+            <span class="text-primary fs-5"><i class="fas fa-leaf"></i></span>
+            <h4 class="fw-bold mb-0 text-dark mt-1">14 <i class="fas fa-info-circle text-muted" style="font-size: 0.65rem;"></i></h4>
+            <span class="text-muted" style="font-size: 0.72rem;">{{ _('Crops') }}</span>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card border-0 bg-white shadow-sm h-100 text-center p-2 rounded-3">
+            <span class="text-warning fs-5"><i class="fas fa-shield-virus"></i></span>
+            <h4 class="fw-bold mb-0 text-dark mt-1">38</h4>
+            <span class="text-muted" style="font-size: 0.72rem;">{{ _('Diseases') }}</span>
         </div>
     </div>
 </div>
 
-<!-- Location Modal -->
-<div class="modal fade" id="locationModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4 border-0">
-      <form action="{{ url_for('weather.set_location') }}" method="POST">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold">{{ _('Update Location') }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-                <input type="text" class="form-control form-control-lg rounded-3" id="city" name="city" value="{{ city }}" required placeholder="{{ _('Enter City Name') }}">
-            </div>
-            <button type="button" class="btn btn-outline-success w-100 rounded-3 mb-2" id="locateMeBtn">
-                <i class="fas fa-crosshairs me-2"></i> {{ _('Use Current Location') }}
-            </button>
-          </div>
-          <div class="modal-footer border-0 pt-0">
-            <button type="submit" class="btn btn-success w-100 rounded-3 py-2">{{ _('Save') }}</button>
-          </div>
-      </form>
+<!-- Quick Action Shortcuts -->
+<div class="row g-2 mb-4">
+    <div class="col-6">
+        <a href="{{ url_for('predictions.detect') }}" class="card border-0 text-decoration-none bg-success text-white shadow-sm rounded-4 p-3 h-100 text-center">
+            <div class="mb-2"><i class="fas fa-camera fa-2x"></i></div>
+            <div class="fw-bold small">{{ _('Detect Disease') }}</div>
+            <span class="text-white-50" style="font-size: 0.72rem;">{{ _('Instant AI Scan') }}</span>
+        </a>
+    </div>
+    <div class="col-6">
+        <a href="{{ url_for('location.index') }}" class="card border-0 text-decoration-none bg-white text-dark shadow-sm rounded-4 p-3 h-100 text-center border">
+            <div class="mb-2 text-danger"><i class="fas fa-map-marker-alt fa-2x"></i></div>
+            <div class="fw-bold small">{{ _('Nearby Services') }}</div>
+            <span class="text-muted" style="font-size: 0.72rem;">{{ _('Stores & Experts') }}</span>
+        </a>
+    </div>
+</div>
+
+<!-- Supported Crops Modal -->
+<div class="modal fade" id="supportedCropsModal" tabindex="-1" aria-labelledby="supportedCropsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-success" id="supportedCropsModalLabel">
+            <i class="fas fa-leaf me-2"></i>{{ _('Supported Crop Catalog') }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning border-0 rounded-3 small mb-3">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            <strong>{{ _('Notice:') }}</strong> {{ _('PlantCare currently diagnoses 14 crops across 38 conditions. Uploading other crops (like Coconut, Mango, Wheat, Rice, or Banana) will produce inaccurate predictions as they are not yet trained.') }}
+        </div>
+        <div class="row g-2">
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Apple</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Blueberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Cherry (sour/sweet)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Corn (Maize)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Grape</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Orange (Citrus)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Peach</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Pepper (Bell)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Potato</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Raspberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Soybean</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Squash / Cucurbit</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Strawberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Tomato</span></div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ _('Got it') }}</button>
+      </div>
     </div>
   </div>
-</div><!-- Stats -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card bg-success text-white shadow-sm">
-            <div class="card-body text-center">
-                <h3>{{ total_predictions }}</h3>
-                <p class="mb-0">{{ _('Total Predictions') }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white shadow-sm">
-            <div class="card-body text-center">
-                <h3>5</h3>
-                <p class="mb-0">{{ _('Supported Classes') }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-warning text-white shadow-sm">
-            <div class="card-body text-center">
-                <h3>2</h3>
-                <p class="mb-0">{{ _('Supported Crops') }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body text-center p-4">
-                <i class="fas fa-camera fa-3x text-success mb-3"></i>
-                <h5>{{ _('Detect Disease') }}</h5>
-                <p class="text-muted">{{ _('Upload a leaf image for AI analysis') }}</p>
-                <a href="{{ url_for('predictions.detect') }}" class="btn btn-success">
-                    <i class="fas fa-upload"></i> {{ _('Upload Image') }}
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body text-center p-4">
-                <i class="fas fa-history fa-3x text-info mb-3"></i>
-                <h5>{{ _('Prediction History') }}</h5>
-                <p class="text-muted">{{ _('View all your past predictions') }}</p>
-                <a href="{{ url_for('predictions.history') }}" class="btn btn-info text-white">
-                    <i class="fas fa-list"></i> {{ _('View History') }}
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Recent Predictions -->

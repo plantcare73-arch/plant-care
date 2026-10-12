@@ -3,244 +3,293 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-10">
-        <div class="d-flex align-items-center gap-3 mb-4">
-            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
-                <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
-            </button>
-            <h2 class="mb-0 fw-bold">
-                <i class="fas fa-clipboard-check text-success me-2"></i> {{ _('Prediction Result') }}
-            </h2>
+    <div class="col-lg-10">
+        <!-- Back Navigation & Title -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="handlePwaBack()">
+                    <i class="fas fa-arrow-left me-1"></i> {{ _('Back') }}
+                </button>
+                <h4 class="mb-0 fw-bold text-dark">{{ _('Diagnosis Result') }}</h4>
+            </div>
+            <a href="{{ url_for('predictions.detect') }}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                <i class="fas fa-camera me-1"></i> {{ _('New Scan') }}
+            </a>
         </div>
 
-        <div class="row">
-            <!-- Image & Prediction Summary -->
-            <div class="col-md-5">
-                <div class="card shadow-sm mb-3">
-                    <img src="{{ url_for('predictions.uploaded_file', filename=prediction.image_filename) }}"
-                         class="card-img-top" alt="Uploaded leaf image">
-                    <div class="card-body text-center">
-                        <small class="text-muted">
-                            Uploaded: {{ prediction.created_at.strftime('%Y-%m-%d %H:%M') }}
-                        </small>
+        <!-- Unsupported Crop / Low Confidence Alert Banner -->
+        {% if prediction.confidence < 0.65 %}
+        <div class="alert alert-warning border-0 rounded-4 shadow-sm p-3 mb-3">
+            <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle bg-warning text-white p-2 d-flex align-items-center justify-content-center mt-1" style="width: 36px; height: 36px; min-width: 36px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold text-dark mb-1">
+                        {{ _('Low Confidence Prediction') }} ({{ "%.1f"|format(prediction.confidence * 100) }}%) — {{ _('Possible Unsupported Crop') }}
+                    </h6>
+                    <p class="small text-secondary mb-2">
+                        {{ _('The AI model is uncertain about this leaf. If you uploaded an unsupported crop (such as') }}
+                        <strong>{{ _('Coconut, Mango, Arecanut, Banana, or Rice') }}</strong>, 
+                        {{ _('the diagnosis is inaccurate because this model was trained on 14 specific crop types.') }}
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-dark rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#supportedCropsResultModal">
+                            <i class="fas fa-leaf me-1"></i> {{ _('View 14 Supported Crops') }}
+                        </button>
+                        <a href="{{ url_for('location.index') }}" class="btn btn-sm btn-success rounded-pill px-3">
+                            <i class="fas fa-user-md me-1"></i> {{ _('Consult Expert (Kisan Helpline)') }}
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+        {% endif %}
 
-            <!-- Results -->
-            <div class="col-md-7">
-                <!-- Main Result -->
-                <div class="card shadow-sm mb-3
-                    {% if 'healthy' in prediction.predicted_class.lower() %}border-success{% else %}border-warning{% endif %}">
-                    <div class="card-header
-                        {% if 'healthy' in prediction.predicted_class.lower() %}bg-success{% else %}bg-warning{% endif %} text-white">
-                        <h5 class="mb-0">
-                            {% if 'healthy' in prediction.predicted_class.lower() %}
-                            <i class="fas fa-check-circle"></i> {{ _('Healthy Plant') }}
-                            {% else %}
-                            <i class="fas fa-exclamation-triangle"></i> {{ _('Disease Detected') }}
-                            {% endif %}
-                        </h5>
+        <!-- Main Diagnosis Hero Card -->
+        <div class="card shadow-sm border-0 rounded-4 mb-3 overflow-hidden bg-white">
+            <div class="row g-0">
+                <!-- Image Side -->
+                <div class="col-md-5 bg-light d-flex flex-column align-items-center justify-content-center p-3 text-center border-end">
+                    <div class="w-100 rounded-3 overflow-hidden position-relative shadow-sm bg-white" style="max-height: 280px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                        <img src="{{ url_for('predictions.uploaded_file', filename=prediction.image_filename) }}"
+                             onerror="this.onerror=null; this.src='/static/icons/leaf-placeholder.svg'; this.style.opacity='0.4'; this.style.maxHeight='140px';"
+                             class="img-fluid w-100 object-fit-cover" 
+                             alt="Uploaded leaf image"
+                             style="max-height: 280px; object-fit: cover;">
                     </div>
-                    <div class="card-body">
-                        <table class="table table-borderless mb-0">
-                            <tr>
-                                <th>{{ _('Crop:') }}</th>
-                                <td>{{ _(prediction.disease_info.get('crop', 'Unknown')) }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ _('Disease:') }}</th>
-                                <td>
-                                    <strong>{{ _(prediction.disease_info.get('disease', prediction.display_name)) }}</strong>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>{{ _('Model Confidence:') }}</th>
-                                <td>
-                                    <div class="progress" style="height: 25px;">
-                                        <div class="progress-bar
-                                            {% if prediction.confidence >= 0.8 %}bg-success
-                                            {% elif prediction.confidence >= 0.5 %}bg-warning
-                                            {% else %}bg-danger{% endif %}"
-                                             style="width: {{ (prediction.confidence * 100)|int }}%;">
-                                            {{ "%.1f"|format(prediction.confidence * 100) }}%
-                                        </div>
-                                    </div>
-                                    <small class="text-muted mt-1 d-block">
-                                        {{ _("This is the model's confidence in its prediction, not a certainty of disease presence.") }}
-                                    </small>
-                                </td>
-                            </tr>
-                        </table>
+                    <div class="mt-2 text-muted small">
+                        <i class="fas fa-calendar-alt me-1"></i> {{ prediction.created_at.strftime('%d %b %Y, %H:%M') }}
                     </div>
                 </div>
 
-                <!-- Low Confidence Warning -->
-                {% if prediction.confidence < 0.7 %}
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>{{ _('Low Confidence Prediction:') }}</strong>
-                    {{ _('The model is not very confident about this prediction.') }}
-                    {{ _('We recommend consulting a qualified agricultural expert for a reliable diagnosis.') }}
+                <!-- Diagnosis Side -->
+                <div class="col-md-7 p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- Health Status Pill -->
+                        <div class="mb-2">
+                            {% if 'healthy' in prediction.predicted_class.lower() %}
+                            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-semibold">
+                                <i class="fas fa-check-circle me-1"></i> {{ _('Healthy Foliage') }}
+                            </span>
+                            {% else %}
+                            <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-2 rounded-pill fw-semibold">
+                                <i class="fas fa-biohazard me-1"></i> {{ _('Disease Detected') }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Crop & Condition -->
+                        <h6 class="text-muted text-uppercase small tracking-wide mb-1">{{ _('Detected Crop') }}: <strong>{{ _(prediction.disease_info.get('crop', 'Unknown')) }}</strong></h6>
+                        <h3 class="fw-bold text-dark mb-3">{{ _(prediction.disease_info.get('disease', prediction.display_name)) }}</h3>
+
+                        <!-- Model Confidence Gauge -->
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small fw-semibold text-secondary">{{ _('Model Confidence') }}</span>
+                                <span class="badge {% if prediction.confidence >= 0.8 %}bg-success{% elif prediction.confidence >= 0.5 %}bg-warning text-dark{% else %}bg-danger{% endif %} rounded-pill px-2">
+                                    {{ "%.1f"|format(prediction.confidence * 100) }}%
+                                </span>
+                            </div>
+                            <div class="progress" style="height: 10px; border-radius: 6px;">
+                                <div class="progress-bar {% if prediction.confidence >= 0.8 %}bg-success{% elif prediction.confidence >= 0.5 %}bg-warning{% else %}bg-danger{% endif %}"
+                                     role="progressbar" style="width: {{ (prediction.confidence * 100)|int }}%;"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block" style="font-size: 0.72rem;">
+                                {{ _("Confidence reflects statistical similarity to trained classes.") }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Links -->
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('location.index') }}" class="btn btn-sm btn-outline-success rounded-pill flex-fill">
+                            <i class="fas fa-map-marker-alt me-1"></i> {{ _('Nearby Stores & Experts') }}
+                        </a>
+                        <a href="{{ url_for('predictions.history') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                            <i class="fas fa-history"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disease Overview & Symptoms -->
+        {% if prediction.disease_info.get('description') or prediction.disease_info.get('symptoms') %}
+        <div class="card shadow-sm border-0 rounded-4 mb-3 bg-white p-3 p-md-4">
+            <h5 class="fw-bold text-dark mb-2"><i class="fas fa-info-circle text-success me-2"></i>{{ _('About This Condition') }}</h5>
+            <p class="text-secondary small mb-3">{{ _(prediction.disease_info.description) }}</p>
+
+            {% if prediction.disease_info.get('symptoms') %}
+            <h6 class="fw-bold text-dark mb-2"><i class="fas fa-list-check text-warning me-2"></i>{{ _('Key Symptoms') }}</h6>
+            <ul class="list-unstyled mb-0 small text-secondary">
+                {% for symptom in prediction.disease_info.symptoms %}
+                <li class="mb-1"><i class="fas fa-circle-dot text-warning me-2 fa-xs"></i>{{ _(symptom) }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Treatments Accordion -->
+        {% if prediction.disease_info.get('treatments') %}
+        <div class="card shadow-sm border-0 rounded-4 mb-3 bg-white p-3 p-md-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="fas fa-notes-medical text-primary me-2"></i>{{ _('Recommended Treatment Protocols') }}</h5>
+            
+            <div class="accordion accordion-flush" id="treatmentAccordion">
+                <!-- Preventive -->
+                {% if prediction.disease_info.treatments.preventive %}
+                <div class="accordion-item border rounded-3 mb-2 overflow-hidden">
+                    <h2 class="accordion-header" id="headingPrev">
+                        <button class="accordion-button bg-light fw-bold text-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrev">
+                            <i class="fas fa-shield-alt me-2"></i> {{ _('1. Preventive & Cultural Practices') }}
+                        </button>
+                    </h2>
+                    <div id="collapsePrev" class="accordion-collapse collapse show">
+                        <div class="accordion-body small text-secondary">
+                            {% for treatment in prediction.disease_info.treatments.preventive %}
+                            <ul class="mb-0">
+                                {% for step in treatment.instructions %}
+                                <li class="mb-1">{{ _(step) }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Organic -->
+                {% if prediction.disease_info.treatments.organic %}
+                <div class="accordion-item border rounded-3 mb-2 overflow-hidden">
+                    <h2 class="accordion-header" id="headingOrg">
+                        <button class="accordion-button collapsed bg-light fw-bold text-info-emphasis" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrg">
+                            <i class="fas fa-leaf me-2"></i> {{ _('2. Organic & Biological Controls') }}
+                        </button>
+                    </h2>
+                    <div id="collapseOrg" class="accordion-collapse collapse">
+                        <div class="accordion-body small text-secondary">
+                            {% for treatment in prediction.disease_info.treatments.organic %}
+                            <ul class="mb-2">
+                                {% for step in treatment.instructions %}
+                                <li class="mb-1">{{ _(step) }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% if treatment.safety_warnings %}
+                            <div class="alert alert-info py-1 px-2 rounded-2 small mb-0">
+                                {% for w in treatment.safety_warnings %}{{ _(w) }}{% endfor %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Chemical -->
+                {% if prediction.disease_info.treatments.chemical %}
+                <div class="accordion-item border rounded-3 mb-2 overflow-hidden">
+                    <h2 class="accordion-header" id="headingChem">
+                        <button class="accordion-button collapsed bg-light fw-bold text-danger" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChem">
+                            <i class="fas fa-flask me-2"></i> {{ _('3. Chemical Fungicides / Pesticides') }}
+                        </button>
+                    </h2>
+                    <div id="collapseChem" class="accordion-collapse collapse">
+                        <div class="accordion-body small text-secondary">
+                            {% for treatment in prediction.disease_info.treatments.chemical %}
+                            <ul class="mb-2">
+                                {% for step in treatment.instructions %}
+                                <li class="mb-1">{{ _(step) }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% if treatment.safety_warnings %}
+                            <div class="alert alert-danger py-2 px-3 rounded-3 small mb-0">
+                                <strong><i class="fas fa-exclamation-triangle me-1"></i>{{ _('Safety Warning:') }}</strong>
+                                <ul class="mb-0 mt-1">
+                                    {% for w in treatment.safety_warnings %}<li>{{ _(w) }}</li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
             </div>
-        </div>
 
-        <!-- Description -->
-        {% if prediction.disease_info.get('description') %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="fas fa-info-circle text-info"></i> {{ _('About This Condition') }}</h5>
-            </div>
-            <div class="card-body">
-                <p>{{ _(prediction.disease_info.description) }}</p>
+            <div class="alert alert-light border rounded-3 small text-muted mt-3 mb-0">
+                <i class="fas fa-user-shield me-1 text-primary"></i>
+                <strong>{{ _('Disclaimer:') }}</strong> {{ _('Recommendations are for informational agricultural guidance. Always consult local agronomists before applying synthetic pesticides.') }}
             </div>
         </div>
         {% endif %}
 
-        <!-- Symptoms -->
-        {% if prediction.disease_info.get('symptoms') %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="fas fa-list-ul text-warning"></i> {{ _('Symptoms') }}</h5>
+        <!-- Collapsible Model Confidence Analysis -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+            <div class="card-header bg-white border-0 py-3" role="button" data-bs-toggle="collapse" data-bs-target="#collapseConfidenceDist">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold text-secondary"><i class="fas fa-chart-pie me-2 text-primary"></i>{{ _('Detailed Class Probabilities') }}</h6>
+                    <i class="fas fa-chevron-down text-muted"></i>
+                </div>
             </div>
-            <div class="card-body">
-                <ul>
-                    {% for symptom in prediction.disease_info.symptoms %}
-                    <li>{{ _(symptom) }}</li>
+            <div id="collapseConfidenceDist" class="collapse">
+                <div class="card-body pt-0">
+                    {% for class_name, conf in prediction.all_predictions.items() %}
+                    {% if conf >= 0.02 %}
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between small text-secondary">
+                            <span>{{ _(class_name|replace('_', ' ')) }}</span>
+                            <span class="fw-semibold">{{ "%.1f"|format(conf * 100) }}%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar {% if class_name == prediction.predicted_class %}bg-success{% else %}bg-secondary{% endif %}"
+                                 style="width: {{ (conf * 100)|int }}%;"></div>
+                        </div>
+                    </div>
+                    {% endif %}
                     {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Treatments -->
-        {% if prediction.disease_info.get('treatments') %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="fas fa-first-aid text-success"></i> {{ _('Recommended Treatments') }}</h5>
-            </div>
-            <div class="card-body">
-                <div class="accordion" id="treatmentAccordion">
-                    
-                    <!-- Preventive -->
-                    {% if prediction.disease_info.treatments.preventive %}
-                    <div class="accordion-item border-success mb-2">
-                        <h2 class="accordion-header" id="headingPreventive">
-                            <button class="accordion-button bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePreventive" aria-expanded="true" aria-controls="collapsePreventive">
-                                <i class="fas fa-shield-alt me-2"></i> {{ _('Preventive Measures') }}
-                            </button>
-                        </h2>
-                        <div id="collapsePreventive" class="accordion-collapse collapse show" aria-labelledby="headingPreventive">
-                            <div class="accordion-body">
-                                {% for treatment in prediction.disease_info.treatments.preventive %}
-                                <ul>
-                                    {% for step in treatment.instructions %}
-                                    <li>{{ _(step) }}</li>
-                                    {% endfor %}
-                                </ul>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Organic -->
-                    {% if prediction.disease_info.treatments.organic %}
-                    <div class="accordion-item border-info mb-2">
-                        <h2 class="accordion-header" id="headingOrganic">
-                            <button class="accordion-button collapsed bg-info text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrganic" aria-expanded="false" aria-controls="collapseOrganic">
-                                <i class="fas fa-leaf me-2"></i> {{ _('Organic Treatments') }}
-                            </button>
-                        </h2>
-                        <div id="collapseOrganic" class="accordion-collapse collapse" aria-labelledby="headingOrganic">
-                            <div class="accordion-body">
-                                {% for treatment in prediction.disease_info.treatments.organic %}
-                                <ul>
-                                    {% for step in treatment.instructions %}
-                                    <li>{{ _(step) }}</li>
-                                    {% endfor %}
-                                </ul>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Chemical -->
-                    {% if prediction.disease_info.treatments.chemical %}
-                    <div class="accordion-item border-danger mb-2">
-                        <h2 class="accordion-header" id="headingChemical">
-                            <button class="accordion-button collapsed bg-danger text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChemical" aria-expanded="false" aria-controls="collapseChemical">
-                                <i class="fas fa-flask me-2"></i> {{ _('Chemical Treatments') }}
-                            </button>
-                        </h2>
-                        <div id="collapseChemical" class="accordion-collapse collapse" aria-labelledby="headingChemical">
-                            <div class="accordion-body">
-                                {% for treatment in prediction.disease_info.treatments.chemical %}
-                                <ul>
-                                    {% for step in treatment.instructions %}
-                                    <li>{{ _(step) }}</li>
-                                    {% endfor %}
-                                </ul>
-                                {% if treatment.safety_warnings %}
-                                <div class="alert alert-warning mt-2 mb-0">
-                                    <i class="fas fa-exclamation-triangle"></i> <strong>{{ _('Safety Warnings:') }}</strong>
-                                    <ul class="mb-0 mt-1">
-                                        {% for warning in treatment.safety_warnings %}
-                                        <li>{{ _(warning) }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                </div>
-                
-                <div class="alert alert-secondary mt-3 mb-0">
-                    <i class="fas fa-user-md"></i>
-                    <strong>{{ _('Disclaimer:') }}</strong> {{ _('These recommendations are for informational purposes only.') }}
-                    {{ _('Always consult a qualified agricultural expert before applying any chemical treatments.') }}
                 </div>
             </div>
-        </div>
-        {% endif %}
-
-        <!-- All Predictions (Confidence Distribution) -->
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="fas fa-chart-bar text-primary"></i> {{ _('Confidence Distribution') }}</h5>
-            </div>
-            <div class="card-body">
-                {% for class_name, conf in prediction.all_predictions.items() %}
-                <div class="mb-2">
-                    <div class="d-flex justify-content-between">
-                        <small>{{ _(class_name|replace('_', ' ')) }}</small>
-                        <small>{{ "%.1f"|format(conf * 100) }}%</small>
-                    </div>
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar {% if class_name == prediction.predicted_class %}bg-success{% else %}bg-secondary{% endif %}"
-                             style="width: {{ (conf * 100)|int }}%;"></div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="text-center mt-4">
-            <a href="{{ url_for('predictions.detect') }}" class="btn btn-success me-2">
-                <i class="fas fa-camera"></i> {{ _('New Prediction') }}
-            </a>
-            <a href="{{ url_for('predictions.history') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-history"></i> {{ _('View History') }}
-            </a>
         </div>
     </div>
+</div>
+
+<!-- Supported Crops Modal (Result Screen) -->
+<div class="modal fade" id="supportedCropsResultModal" tabindex="-1" aria-labelledby="supportedCropsResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-success" id="supportedCropsResultModalLabel">
+            <i class="fas fa-leaf me-2"></i>{{ _('Supported Crop Catalog') }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning border-0 rounded-3 small mb-3">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            <strong>{{ _('Notice for Coconut & Other Crops:') }}</strong> {{ _('PlantCare currently diagnoses 14 crops across 38 conditions. Uploading other crops (like Coconut, Mango, Wheat, Rice, or Banana) will produce inaccurate predictions as they are not yet trained.') }}
+        </div>
+        <div class="row g-2">
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Apple</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Blueberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Cherry (sour/sweet)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Corn (Maize)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Grape</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Orange (Citrus)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Peach</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Pepper (Bell)</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Potato</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Raspberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Soybean</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Squash / Cucurbit</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Strawberry</span></div>
+            <div class="col-6"><span class="badge bg-light text-dark border p-2 w-100 text-start"><i class="fas fa-check text-success me-1"></i> Tomato</span></div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ _('Close') }}</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

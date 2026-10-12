@@ -42,9 +42,20 @@ def detect():
             db = get_db()
             predictions_col = db['predictions']
             
+            # Read and compress/encode image as base64 backup for persistent rendering across Render restarts
+            image_b64 = None
+            try:
+                import base64
+                if os.path.exists(filepath):
+                    with open(filepath, 'rb') as f_img:
+                        image_b64 = base64.b64encode(f_img.read()).decode('utf-8')
+            except Exception as b64_err:
+                current_app.logger.warning("Could not encode base64 image backup: %s", b64_err)
+
             prediction_record = {
                 'user_id': session['user_id'],
                 'image_filename': filename,
+                'image_b64': image_b64,
                 'predicted_class': predicted_class,
                 'display_name': display_name,
                 'confidence': confidence,
@@ -114,8 +125,6 @@ def history():
         .limit(per_page)
     )
     
-    # Fetch unique crops and diseases for the filter dropdowns
-    # In a real app, this might be aggregated or cached
     unique_crops = predictions_col.distinct('disease_info.crop', {'user_id': user_id})
     unique_diseases = predictions_col.distinct('disease_info.disease', {'user_id': user_id})
     total_pages = (total + per_page - 1) // per_page
@@ -136,4 +145,27 @@ def history():
 @predictions_bp.route('/uploads/<filename>')
 @login_required
 def uploaded_file(filename):
-    return send_from_directory(current_app.config['UPLOAD_DIR'], filename)
+    import os
+    import base64
+    from flask import Response
+    
+    upload_dir = current_app.config['UPLOAD_DIR']
+    file_path = os.path.join(upload_dir, filename)
+    
+    # 1. If file exists on filesystem, serve it directly
+    if os.path.exists(file_path):
+        return send_from_directory(upload_dir, filename)
+        
+    # 2. Ephemeral disk fallback: retrieve base64 backup from MongoDB
+    try:
+        db = get_db()
+        doc = db['predictions'].find_one({'image_filename': filename})
+        if doc and doc.get('image_b64'):
+            img_bytes = base64.b64decode(doc['image_b64'])
+            mime_type = 'image/png' if filename.endswith('.png') else 'image/jpeg'
+            return Response(img_bytes, mimetype=mime_type)
+    except Exception as e:
+        current_app.logger.warning("Failed to serve fallback image from DB: %s", e)
+        
+    # 3. If neither available, return 404
+    return send_from_directory(upload_dir, filename)
