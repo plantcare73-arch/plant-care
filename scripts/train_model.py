@@ -22,20 +22,28 @@ Output:
     - models/classification_report.txt (Precision, Recall, F1 per class)
 
 Author: Bhuvaneswari.SA
-Project: AI Plant Care — Final Year Project
+Project: AI Plant Care -- Final Year Project
 """
 
 import os
 import sys
 import argparse
 import json
+from datetime import datetime
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # Non-interactive backend for servers without display
 import matplotlib.pyplot as plt
-from datetime import datetime
 
-# Suppress TensorFlow verbose logging during training
+# Ensure UTF-8 output on Windows consoles to prevent cp1252 UnicodeEncodeError
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+# Suppress TensorFlow verbose C++ logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
@@ -81,17 +89,25 @@ def create_data_generators(data_dir, batch_size, validation_split=0.2):
 
     Data Augmentation Strategy (applied ONLY to training set):
     - Random horizontal flip: Leaves can appear in any orientation
-    - Random rotation (±20°): Account for varied camera angles in the field
-    - Random zoom (±15%): Simulate different distances from the leaf
-    - Random brightness shift (±20%): Handle outdoor lighting variation
-    - Shear transformation (±10%): Minor perspective distortions
+    - Random rotation (+/-20 deg): Account for varied camera angles in the field
+    - Random zoom (+/-15%): Simulate different distances from the leaf
+    - Random brightness shift (+/-20%): Handle outdoor lighting variation
+    - Shear transformation (+/-10%): Minor perspective distortions
 
     Normalization:
     - All pixel values rescaled to [0, 1] range (divide by 255)
-    - This matches the preprocessing used during inference in the web app
+    - Matches preprocessing used during inference in web application
       (see app/ml/preprocessing.py)
     """
-    from tensorflow.keras.preprocessing.image import ImageDataGenerator
+    try:
+        from tensorflow.keras.preprocessing.image import ImageDataGenerator
+    except ImportError:
+        try:
+            from keras.preprocessing.image import ImageDataGenerator
+        except ImportError:
+            raise ImportError(
+                "Could not import ImageDataGenerator. Please ensure TensorFlow or Keras is installed."
+            )
 
     # Training generator with augmentation
     train_datagen = ImageDataGenerator(
@@ -107,13 +123,13 @@ def create_data_generators(data_dir, batch_size, validation_split=0.2):
         fill_mode='nearest',
     )
 
-    # Validation generator — NO augmentation, only rescaling
+    # Validation generator -- NO augmentation, only rescaling
     val_datagen = ImageDataGenerator(
         rescale=1.0 / 255.0,
         validation_split=validation_split,
     )
 
-    print(f"\n📁 Loading dataset from: {data_dir}")
+    print(f"\n[DATA] Loading dataset from: {data_dir}")
     print(f"   Image size: {IMG_SIZE}x{IMG_SIZE}x{CHANNELS}")
     print(f"   Batch size: {batch_size}")
     print(f"   Validation split: {validation_split * 100}%\n")
@@ -145,7 +161,7 @@ def create_data_generators(data_dir, batch_size, validation_split=0.2):
     # Verify class order matches our expected labels
     detected_classes = list(train_generator.class_indices.keys())
     if detected_classes != CLASS_LABELS:
-        print("\n⚠️  WARNING: Detected class order does not match CLASS_LABELS.")
+        print("\n[WARNING] Detected class order does not match CLASS_LABELS.")
         print("   This may cause inference mismatches in the web application.")
         print(f"   Expected {NUM_CLASSES} classes, found {len(detected_classes)}.")
 
@@ -183,7 +199,7 @@ def build_model(learning_rate=0.001):
     from tensorflow.keras import layers, Model
     from tensorflow.keras.optimizers import Adam
 
-    print("\n🏗️  Building model architecture...")
+    print("\n[MODEL] Building model architecture...")
 
     # Load MobileNetV2 pre-trained on ImageNet, without the top classifier
     base_model = tf.keras.applications.MobileNetV2(
@@ -192,7 +208,7 @@ def build_model(learning_rate=0.001):
         weights='imagenet',
     )
 
-    # Freeze base model layers — we only train the classification head
+    # Freeze base model layers -- we only train the classification head
     base_model.trainable = False
 
     # Custom classification head
@@ -215,10 +231,8 @@ def build_model(learning_rate=0.001):
     )
 
     total_params = model.count_params()
-    trainable_params = sum(
-        tf.keras.backend.count_params(w) for w in model.trainable_weights
-    )
-    print(f"   Base model:        MobileNetV2 (ImageNet)")
+    trainable_params = sum(int(np.prod(w.shape)) for w in model.trainable_weights)
+    print("   Base model:        MobileNetV2 (ImageNet)")
     print(f"   Total parameters:  {total_params:,}")
     print(f"   Trainable params:  {trainable_params:,}")
     print(f"   Frozen params:     {total_params - trainable_params:,}")
@@ -242,7 +256,7 @@ def fine_tune_model(model, base_model, learning_rate=0.0001, fine_tune_from=100)
     """
     from tensorflow.keras.optimizers import Adam
 
-    print(f"\n🔧 Fine-tuning: unfreezing layers from {fine_tune_from} onwards...")
+    print(f"\n[FINE-TUNE] Unfreezing layers from {fine_tune_from} onwards...")
 
     base_model.trainable = True
     for layer in base_model.layers[:fine_tune_from]:
@@ -345,7 +359,7 @@ def plot_training_history(history, output_dir):
     path = os.path.join(output_dir, 'training_history.png')
     plt.savefig(path, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"\n📊 Training history plot saved to: {path}")
+    print(f"\n[PLOT] Training history plot saved to: {path}")
 
 
 def evaluate_model(model, val_generator, output_dir):
@@ -355,10 +369,7 @@ def evaluate_model(model, val_generator, output_dir):
     2. Confusion matrix heatmap
     3. Per-class accuracy breakdown
     """
-    from sklearn.metrics import classification_report, confusion_matrix
-    import seaborn as sns
-
-    print("\n📈 Evaluating model on validation set...")
+    print("\n[EVAL] Evaluating model on validation set...")
 
     # Get predictions
     val_generator.reset()
@@ -370,29 +381,51 @@ def evaluate_model(model, val_generator, output_dir):
     class_names = list(val_generator.class_indices.keys())
 
     # Classification Report
-    report = classification_report(
-        y_true, y_pred,
-        target_names=class_names,
-        digits=4,
-    )
+    try:
+        from sklearn.metrics import classification_report, confusion_matrix
+        report = classification_report(
+            y_true, y_pred,
+            target_names=class_names,
+            digits=4,
+        )
+        cm = confusion_matrix(y_true, y_pred)
+    except ImportError:
+        # Fallback if scikit-learn is not available
+        correct = (y_pred == y_true).sum()
+        total = len(y_true)
+        acc = correct / total if total > 0 else 0
+        report = f"Accuracy: {acc:.4f} ({correct}/{total} correct)"
+        cm = np.zeros((len(class_names), len(class_names)), dtype=int)
+        for t, p in zip(y_true, y_pred):
+            cm[t, p] += 1
+
     print("\n" + report)
 
     report_path = os.path.join(output_dir, 'classification_report.txt')
-    with open(report_path, 'w') as f:
-        f.write(f"Classification Report — Plant Disease CNN\n")
+    with open(report_path, 'w', encoding='utf-8') as f:
+        f.write("Classification Report -- Plant Disease CNN\n")
         f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"{'=' * 70}\n\n")
         f.write(report)
-    print(f"📄 Classification report saved to: {report_path}")
+    print(f"[REPORT] Classification report saved to: {report_path}")
 
-    # Confusion Matrix
-    cm = confusion_matrix(y_true, y_pred)
+    # Confusion Matrix Plot
     fig, ax = plt.subplots(figsize=(20, 18))
-    sns.heatmap(
-        cm, annot=False, fmt='d', cmap='Blues',
-        xticklabels=class_names, yticklabels=class_names, ax=ax,
-    )
-    ax.set_title('Confusion Matrix — Plant Disease Classification', fontsize=14, fontweight='bold')
+    try:
+        import seaborn as sns
+        sns.heatmap(
+            cm, annot=False, fmt='d', cmap='Blues',
+            xticklabels=class_names, yticklabels=class_names, ax=ax,
+        )
+    except ImportError:
+        cax = ax.matshow(cm, cmap='Blues')
+        fig.colorbar(cax)
+        ax.set_xticks(range(len(class_names)))
+        ax.set_yticks(range(len(class_names)))
+        ax.set_xticklabels(class_names, rotation=90)
+        ax.set_yticklabels(class_names)
+
+    ax.set_title('Confusion Matrix -- Plant Disease Classification', fontsize=14, fontweight='bold')
     ax.set_xlabel('Predicted Class', fontsize=12)
     ax.set_ylabel('True Class', fontsize=12)
     plt.xticks(rotation=90, fontsize=6)
@@ -402,11 +435,11 @@ def evaluate_model(model, val_generator, output_dir):
     cm_path = os.path.join(output_dir, 'confusion_matrix.png')
     plt.savefig(cm_path, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"📊 Confusion matrix saved to: {cm_path}")
+    print(f"[PLOT] Confusion matrix saved to: {cm_path}")
 
     # Overall metrics
     overall_accuracy = np.sum(y_pred == y_true) / len(y_true)
-    print(f"\n✅ Overall Validation Accuracy: {overall_accuracy:.4f} ({overall_accuracy * 100:.2f}%)")
+    print(f"\n[OK] Overall Validation Accuracy: {overall_accuracy:.4f} ({overall_accuracy * 100:.2f}%)")
 
     return overall_accuracy
 
@@ -462,7 +495,7 @@ Examples:
     args = parser.parse_args()
 
     print("=" * 70)
-    print("🌿 AI Plant Care — CNN Training Pipeline")
+    print("AI Plant Care -- CNN Training Pipeline")
     print("=" * 70)
     print(f"   Started:    {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"   Dataset:    {args.data}")
@@ -473,23 +506,29 @@ Examples:
 
     # Validate dataset path
     if not os.path.isdir(args.data):
-        print(f"\n❌ ERROR: Dataset directory not found: {args.data}")
+        print(f"\n[ERROR] Dataset directory not found: {args.data}")
         print("   Download the PlantVillage dataset and extract it first.")
         print("   Expected structure:")
         print(f"     {args.data}/")
-        print(f"       ├── Apple___Apple_scab/")
-        print(f"       ├── Apple___Black_rot/")
-        print(f"       ├── ...")
-        print(f"       └── Tomato___healthy/")
+        print("       |-- Apple___Apple_scab/")
+        print("       |-- Apple___Black_rot/")
+        print("       |-- ...")
+        print("       +-- Tomato___healthy/")
         sys.exit(1)
 
     # Ensure output directory exists
     os.makedirs(args.output, exist_ok=True)
 
-    # Import TensorFlow after argument parsing to avoid slow startup on --help
-    import tensorflow as tf
-    print(f"\n   TensorFlow:  {tf.__version__}")
-    print(f"   GPU:         {tf.config.list_physical_devices('GPU') or 'None (CPU mode)'}")
+    # Import TensorFlow after argument parsing and dataset validation
+    try:
+        import tensorflow as tf
+        print(f"\n   TensorFlow:  {tf.__version__}")
+        print(f"   GPU:         {tf.config.list_physical_devices('GPU') or 'None (CPU mode)'}")
+    except ImportError:
+        print("\n[ERROR] TensorFlow is not installed in the current Python environment.")
+        print("   To install TensorFlow: pip install tensorflow")
+        print("   Note: On Windows, TensorFlow wheels officially support Python 3.9 - 3.12.")
+        sys.exit(1)
 
     # ---- Phase 1: Data Loading ----
     train_gen, val_gen = create_data_generators(
@@ -502,7 +541,7 @@ Examples:
 
     # ---- Phase 3: Initial Training (frozen base) ----
     print(f"\n{'=' * 70}")
-    print(f"🚀 Phase 1: Training classification head ({args.epochs} epochs)")
+    print(f"[TRAIN] Phase 1: Training classification head ({args.epochs} epochs)")
     print(f"{'=' * 70}")
 
     callbacks, model_path = get_callbacks(args.output)
@@ -518,7 +557,7 @@ Examples:
     # ---- Phase 4: Fine-Tuning (optional) ----
     if not args.no_fine_tune and args.fine_tune_epochs > 0:
         print(f"\n{'=' * 70}")
-        print(f"🔧 Phase 2: Fine-tuning top layers ({args.fine_tune_epochs} epochs)")
+        print(f"[FINE-TUNE] Phase 2: Fine-tuning top layers ({args.fine_tune_epochs} epochs)")
         print(f"{'=' * 70}")
 
         model = fine_tune_model(model, base_model, learning_rate=args.lr / 10)
@@ -539,7 +578,7 @@ Examples:
 
     # ---- Phase 5: Evaluation ----
     print(f"\n{'=' * 70}")
-    print(f"📈 Phase 3: Evaluation & Visualization")
+    print(f"[EVAL] Phase 3: Evaluation & Visualization")
     print(f"{'=' * 70}")
 
     plot_training_history(history, args.output)
@@ -563,12 +602,12 @@ Examples:
         'trained_at': datetime.now().isoformat(),
     }
     meta_path = os.path.join(args.output, 'training_metadata.json')
-    with open(meta_path, 'w') as f:
+    with open(meta_path, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
-    print(f"\n📝 Training metadata saved to: {meta_path}")
+    print(f"\n[META] Training metadata saved to: {meta_path}")
 
     print(f"\n{'=' * 70}")
-    print(f"✅ Training complete!")
+    print("[OK] Training complete!")
     print(f"   Model saved to:   {model_path}")
     print(f"   Val accuracy:     {accuracy:.4f} ({accuracy * 100:.2f}%)")
     print(f"   Finished:         {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
