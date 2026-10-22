@@ -32,6 +32,7 @@ uploads/*
 # Temporary scripts
 fix_po*.py
 promote_admin.py
+*.ps1
 
 # Documentation & IDE
 docs/
