@@ -1,17 +1,19 @@
 """
 Predictions routes.
 """
+import os
+import base64
 from datetime import datetime, timezone
 from bson.objectid import ObjectId
-from flask import render_template, request, redirect, url_for, session, flash, current_app, send_from_directory
+from flask import (
+    render_template, request, redirect, url_for,
+    session, flash, current_app, send_from_directory, Response,
+)
 
 from . import predictions_bp
 from ..extensions import get_db
 from ..utils.decorators import login_required
 from ..utils.validation import validate_image_upload
-
-# Temporary mock for ML (until Phase 2 is fully implemented)
-# We will use the existing predict_disease function logic or move it to ml package.
 
 @predictions_bp.route('/detect', methods=['GET', 'POST'])
 @login_required
@@ -145,10 +147,6 @@ def history():
 @predictions_bp.route('/uploads/<filename>')
 @login_required
 def uploaded_file(filename):
-    import os
-    import base64
-    from flask import Response
-    
     upload_dir = current_app.config['UPLOAD_DIR']
     file_path = os.path.join(upload_dir, filename)
     

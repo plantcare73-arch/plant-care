@@ -72,9 +72,12 @@ plant-disease-detection-system/
 │   ├── admin/               # Administrative analytics, user suspension, CRUD, audit logs
 │   ├── ml/                  # ModelManager singleton, preprocessing, demo fallback
 │   └── translations/        # GNU gettext catalogs (en, hi, kn)
+├── scripts/                 # ML Training Pipeline (train_model.py) & DB seeders
+├── models/                  # CNN model weights (.h5) & model documentation
 ├── tests/                   # 36 Automated Unit, Integration, & Security Pytest Cases
 ├── Dockerfile               # Hardened Python 3.11 image with non-root user
 ├── docker-compose.yml       # Orchestrated Web + MongoDB services with healthchecks
+├── LICENSE                  # Open-source MIT License
 └── .github/workflows/ci.yml # Automated CI/CD pipeline
 ```
 

@@ -88,11 +88,17 @@ python scripts/seed_diseases.py
 python scripts/seed_location_data.py
 ```
 
-### 6. Add the ML Model (Optional)
-To use actual AI predictions rather than Demo Mode, place your trained Keras model inside the `models/` directory:
+### 6. Train or Add the ML Model
+The project comes with a complete training pipeline. You can either train the CNN model on the PlantVillage dataset or place an existing pre-trained model:
+
 ```bash
-# Path should be: models/model_weights.h5
+# Option A: Train from scratch using MobileNetV2 transfer learning
+python scripts/train_model.py --data path/to/PlantVillage --epochs 30 --batch 64
+
+# Option B: Or place pre-trained weights in the models directory:
+# models/plant_disease_model.h5
 ```
+*Note: If no model weights are found, the application automatically runs in structured **Demo Mode** for evaluation.*
 
 ### 7. Run the Application
 ```bash
@@ -152,4 +158,5 @@ python -m babel.messages.frontend compile -d app/translations
 ---
 
 ## 📄 License
-This project is for educational and research purposes.
+This project is open-source under the [MIT License](LICENSE).
+
