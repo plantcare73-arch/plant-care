@@ -18,20 +18,33 @@ def index():
     user_id = session['user_id']
     
     # We join with plants collection to get plant name
-    reminders_cursor = db['reminders'].aggregate([
-        {'$match': {'user_id': user_id}},
-        {'$addFields': {'plant_obj_id': {'$toObjectId': '$plant_id'}}},
-        {'$lookup': {
-            'from': 'plants',
-            'localField': 'plant_obj_id',
-            'foreignField': '_id',
-            'as': 'plant_info'
-        }},
-        {'$unwind': {'path': '$plant_info', 'preserveNullAndEmptyArrays': True}},
-        {'$sort': {'due_date': 1}}
-    ])
-    
-    reminders = list(reminders_cursor)
+    try:
+        reminders_cursor = db['reminders'].aggregate([
+            {'$match': {'user_id': user_id}},
+            {'$addFields': {'plant_obj_id': {'$toObjectId': '$plant_id'}}},
+            {'$lookup': {
+                'from': 'plants',
+                'localField': 'plant_obj_id',
+                'foreignField': '_id',
+                'as': 'plant_info'
+            }},
+            {'$unwind': {'path': '$plant_info', 'preserveNullAndEmptyArrays': True}},
+            {'$sort': {'due_date': 1}}
+        ])
+        reminders = list(reminders_cursor)
+    except Exception:
+        # Fallback for environments or mock drivers lacking $toObjectId expression support
+        raw_reminders = list(db['reminders'].find({'user_id': user_id}).sort('due_date', 1))
+        for r in raw_reminders:
+            p_id = r.get('plant_id')
+            if p_id:
+                try:
+                    r['plant_info'] = db['plants'].find_one({'_id': ObjectId(p_id)})
+                except Exception:
+                    r['plant_info'] = None
+            else:
+                r['plant_info'] = None
+        reminders = raw_reminders
     
     # Separate into pending and completed
     now = datetime.now(timezone.utc)

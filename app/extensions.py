@@ -31,11 +31,12 @@ def init_extensions(app):
 
     # MongoDB
     uri = app.config['MONGODB_URI']
+    is_atlas = 'mongodb+srv' in uri or 'tls=true' in uri.lower() or 'ssl=true' in uri.lower()
     mongo_kwargs = {
-        'serverSelectionTimeoutMS': 4000,
-        'connectTimeoutMS': 4000,
+        'serverSelectionTimeoutMS': 15000 if is_atlas else 2000,
+        'connectTimeoutMS': 15000 if is_atlas else 2000,
     }
-    if 'mongodb+srv' in uri or 'tls=true' in uri.lower() or 'ssl=true' in uri.lower():
+    if is_atlas:
         try:
             import certifi
             mongo_kwargs['tlsCAFile'] = certifi.where()
@@ -43,8 +44,33 @@ def init_extensions(app):
             pass
         mongo_kwargs['tlsAllowInvalidCertificates'] = True
 
-    mongo_client = MongoClient(uri, **mongo_kwargs)
+    try:
+        mongo_client = MongoClient(uri, **mongo_kwargs)
+        mongo_client.admin.command('ping')
+    except Exception as e:
+        if app.config.get('APP_ENV') in ('development', 'testing') or app.config.get('DEBUG'):
+            app.logger.warning(
+                "Local MongoDB server at %s is unreachable (%s). Using in-memory fallback database for local development.",
+                uri, e
+            )
+            import mongomock
+            mongo_client = mongomock.MongoClient()
+        else:
+            raise
+
     db = mongo_client[app.config['DATABASE_NAME']]
+
+    # Auto-seed mock database if empty
+    if 'mongomock' in str(type(mongo_client)).lower():
+        try:
+            if db['diseases'].count_documents({}) == 0:
+                from scripts.seed_diseases import get_disease_dataset
+                d_list, t_list = get_disease_dataset()
+                db['diseases'].insert_many(d_list)
+                db['treatments'].insert_many(t_list)
+                app.logger.info("Auto-seeded %d diseases into development in-memory database.", len(d_list))
+        except Exception as err:
+            app.logger.warning("Could not auto-seed diseases in development: %s", err)
 
     # Create upload directory
     os.makedirs(app.config['UPLOAD_DIR'], exist_ok=True)

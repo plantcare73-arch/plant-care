@@ -2,6 +2,17 @@ import io
 import pytest
 from PIL import Image
 import bcrypt
+import pymongo
+
+# Auto-fallback to mongomock when local MongoDB server is not running
+try:
+    _client = pymongo.MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=500)
+    _client.admin.command('ping')
+except Exception:
+    import mongomock
+    _patcher = mongomock.patch(servers=(('localhost', 27017),))
+    _patcher.start()
+
 from app import create_app
 from app.config import TestingConfig
 from app.extensions import get_db
