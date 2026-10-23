@@ -9,7 +9,7 @@ from ..extensions import get_db
 
 class WeatherService:
     def __init__(self):
-        self.api_key = os.environ.get('OPENWEATHERMAP_API_KEY')
+        self.api_key = os.environ.get('OPENWEATHERMAP_API_KEY') or os.environ.get('WEATHER_API_KEY')
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"
         
     def get_weather(self, city, country_code=""):

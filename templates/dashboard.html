@@ -145,6 +145,64 @@
   </div>
 </div>
 
+<!-- Change Location Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-success" id="locationModalLabel">
+            <i class="fas fa-map-marker-alt me-2 text-danger"></i>{{ _('Change Farm Location') }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('weather.set_location') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="modal-body">
+            <p class="text-muted small mb-3">
+                {{ _('Update your farm location to receive accurate local weather forecasts, disease risk warnings, and personalized irrigation advice.') }}
+            </p>
+            
+            <div class="mb-3">
+                <label for="city" class="form-label fw-semibold small text-dark">{{ _('City or District Name') }}</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 rounded-start-pill text-muted ps-3">
+                        <i class="fas fa-city"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 rounded-end-pill py-2" id="city" name="city" value="{{ city }}" placeholder="e.g. San Francisco, Bengaluru, London, Delhi" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-success rounded-pill w-100 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm" id="locateMeBtn">
+                    <i class="fas fa-location-crosshairs"></i>
+                    <span>{{ _('Use My Current GPS Location') }}</span>
+                </button>
+            </div>
+
+            <!-- Quick City Suggestions -->
+            <div>
+                <label class="form-label small text-muted mb-1">{{ _('Quick suggestions:') }}</label>
+                <div class="d-flex flex-wrap gap-1">
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 small" onclick="document.getElementById('city').value='Bengaluru'">Bengaluru</button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 small" onclick="document.getElementById('city').value='Delhi'">Delhi</button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 small" onclick="document.getElementById('city').value='Mumbai'">Mumbai</button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 small" onclick="document.getElementById('city').value='London'">London</button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-2 py-1 small" onclick="document.getElementById('city').value='San Francisco'">San Francisco</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+          <button type="submit" class="btn btn-success rounded-pill px-4 shadow-sm">
+              <i class="fas fa-check me-1"></i> {{ _('Save Location') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 <!-- Recent Predictions -->
 {% if predictions %}
 <h4 class="mb-3">Recent Predictions</h4>
@@ -192,45 +250,49 @@
 
 {% block extra_scripts %}
 <script>
-document.getElementById('locateMeBtn').addEventListener('click', function() {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Locating...';
-    btn.disabled = true;
+const locateBtn = document.getElementById('locateMeBtn');
+if (locateBtn) {
+    locateBtn.addEventListener('click', function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Locating...';
+        btn.disabled = true;
 
-    if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        return;
-    }
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            return;
+        }
 
-    navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        
-        // Reverse geocode to get city name
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-            .then(response => response.json())
-            .then(data => {
-                const city = data.address.city || data.address.town || data.address.village || 'Unknown';
-                document.getElementById('city').value = city;
-                btn.innerHTML = '<i class="fas fa-check me-2"></i> Found!';
-                setTimeout(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            // Reverse geocode to get city/district name
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    const addr = data.address || {};
+                    const city = addr.city || addr.town || addr.village || addr.municipality || addr.state_district || addr.county || 'Bengaluru';
+                    document.getElementById('city').value = city;
+                    btn.innerHTML = '<i class="fas fa-check me-2"></i> ' + city;
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2500);
+                })
+                .catch(() => {
+                    alert('Could not determine city name automatically. Please enter your city name manually.');
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                }, 2000);
-            })
-            .catch(() => {
-                alert('Could not determine city name from location.');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            });
-    }, () => {
-        alert('Unable to retrieve your location');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
+                });
+        }, (err) => {
+            alert('Unable to retrieve location: ' + (err.message || 'Permission denied'));
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, { timeout: 10000 });
     });
-});
+}
 </script>
 {% endblock %}
